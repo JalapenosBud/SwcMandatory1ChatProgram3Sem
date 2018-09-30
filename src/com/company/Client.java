@@ -9,6 +9,22 @@ import java.util.Date;
 
 public class Client implements Observable{
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getChatAlias() {
+        return chatAlias;
+    }
+
+    public void setChatAlias(String chatAlias) {
+        this.chatAlias = chatAlias;
+    }
+
     //id for new client
     private int id = 0;
 
@@ -63,6 +79,8 @@ public class Client implements Observable{
         //måske lav mere persistent på længere sigt, så en gammel client der bliver fjernet kan joine igen
         //altså hvis det er  1 2 3 og client 2 dc'er, så skal en ny client ikke ha hans id men
         //han kan komme tilbage som id 2 og fortsætte hva han lavede
+        if(client.getId() == this.id)
+            return "";
         return "\ni am " + chatAlias + ", my id is: " + id + "\nand " + client.toString() + " joined my room\n";
     }
 

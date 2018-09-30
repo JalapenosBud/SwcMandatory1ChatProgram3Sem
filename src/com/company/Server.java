@@ -36,7 +36,7 @@ public class Server {
             {
                 System.out.println("\n******");
                 System.out.println("new connection inbound!");
-                addInterestedClientsForBroadcast(new Client("Client", clients.size()-1));
+                addInterestedClientsForBroadcast(new Client("Client", clients.size()));
 
                 //System.out.println("2 seconds has passed");
                 notifyAllClientsNewClientJoined();
