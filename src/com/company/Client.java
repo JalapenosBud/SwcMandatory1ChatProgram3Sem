@@ -9,10 +9,28 @@ import java.util.Date;
 
 public class Client implements Observable{
 
-    //pæn sout med time, min, sec
-    void test()
+    //id for new client
+    private int id = 0;
+
+    //user name for client
+    private String chatAlias;
+
+    //client's port num
+    private int portNum;
+
+    //clients ipAddress
+    private InetAddress ipAddress;
+
+
+    //denne her bliver sat til true når forbindelse til serveren er oprettet
+    //til false når der dc'es
+    //noget condition her**
+    private boolean isAlive;
+
+    public Client(String name, int id)
     {
-        LocalDateTime.now();
+        this.chatAlias = name;
+        this.id = id;
     }
 
     //heartbeat isalive method every minute to the server
@@ -37,37 +55,19 @@ public class Client implements Observable{
 
     }
 
-    //lav en anden metode med dato også og fuld timestamp uden milisec
-    void printWholeDate()
-    {
-        LocalDateTime.now();
-    }
-
-    //client's port num
-    int portNum;
-
-    //clients ipAddress
-    InetAddress ipAddress;
-
-    //user name for client
-    String chatAlias;
-
-    //denne her bliver sat til true når forbindelse til serveren er oprettet
-    //til false når der dc'es
-    //noget condition her**
-    boolean isAlive;
-
-
-
     @Override
-    public String broadcastThis() {
+    public String broadcastThis(Client client) {
 
         //ha et client object i parameter
         //i client class ha et id der bliver incrementet for hver gang en ny client bliver lavet i systemet
         //måske lav mere persistent på længere sigt, så en gammel client der bliver fjernet kan joine igen
         //altså hvis det er  1 2 3 og client 2 dc'er, så skal en ny client ikke ha hans id men
         //han kan komme tilbage som id 2 og fortsætte hva han lavede
-        return "i joined hello hehehe";
+        return "\ni am " + chatAlias + ", my id is: " + id + "\nand " + client.toString() + " joined my room\n";
     }
 
+    @Override
+    public String toString() {
+        return "client" + id;
+    }
 }
