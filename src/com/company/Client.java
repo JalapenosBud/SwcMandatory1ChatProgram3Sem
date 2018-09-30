@@ -2,7 +2,9 @@ package com.company;
 
 import java.net.InetAddress;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.Date;
 
 public class Client implements Observable{
@@ -14,13 +16,24 @@ public class Client implements Observable{
     }
 
     //heartbeat isalive method every minute to the server
-    void heartbeatIsAlive()
+    void heartbeatIsAlive(float timeToCheck)
     {
-        LocalDateTime timeJoined = LocalDateTime.now();
+        //til at køre loop
+        boolean countingTime  = true;
+        //tager tiden nu
+        long test = System.currentTimeMillis();
 
-        String theTimeJoinedString = timeJoined.toString();
+        while(countingTime)
+        {
+            //hvis det tidspunkt nu minus der hvor vi startede er større end 2 sek
+            //print out
+            if(System.currentTimeMillis() - test > timeToCheck)
+            {
+                System.out.println("2 seconds has passed");
+                test = System.currentTimeMillis();
+            }
 
-        LocalDateTime checkTime = (double)(timeJoined - LocalDateTime.now());
+        }
 
     }
 
