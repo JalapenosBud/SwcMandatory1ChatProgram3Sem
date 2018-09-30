@@ -7,7 +7,25 @@ import java.util.Date;
 
 public class Client implements Observable{
 
+    //pæn sout med time, min, sec
     void test()
+    {
+        LocalDateTime.now();
+    }
+
+    //heartbeat isalive method every minute to the server
+    void heartbeatIsAlive()
+    {
+        LocalDateTime timeJoined = LocalDateTime.now();
+
+        String theTimeJoinedString = timeJoined.toString();
+
+        LocalDateTime checkTime = (double)(timeJoined - LocalDateTime.now());
+
+    }
+
+    //lav en anden metode med dato også og fuld timestamp uden milisec
+    void printWholeDate()
     {
         LocalDateTime.now();
     }
