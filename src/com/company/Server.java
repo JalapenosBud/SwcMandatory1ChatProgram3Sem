@@ -8,45 +8,63 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class Server extends Thread{
 
-    ServerSocket serverSocket = null;
-    int port = 1234;
-    static int clientNo = 0;
-    Client tmpClient = null;
-    String fromUser = "";
+    private String soutString="";
 
-    public List<Client> getClients() {
-        return clients;
+    public String getSoutString() {
+        return soutString;
     }
 
-    //gets length of list - 1
-    public int getNumberOfLastAddedClient()
-    {
-        return clients.size() - 1;
+    public void setSoutString(String soutString) {
+        this.soutString = soutString;
     }
 
-    private List<Client> clients = new ArrayList<>();
 
 
-    public Server()
-    {
-        super("MySuperServer");
+
+
+    private Socket client;
+    private Scanner input;
+
+    public PrintWriter getOutput() {
+        return output;
     }
 
-    //TODO: refactor for low coupling
-    public void addInterestedClientsForBroadcast(Client client)
-    {
-        clients.add(client);
+    private PrintWriter output;
+
+    public Server(Socket socket) {
+        //Set up reference to associated socket…
+        client = socket;
+        try {
+            input = new Scanner(client.getInputStream());
+            output = new PrintWriter(client.getOutputStream(), true);
+        } catch (IOException ioEx) {
+            ioEx.printStackTrace();
+        }
     }
 
-    //TODO: refactor for low coupling
-    public void notifyAllClientsNewClientJoined()
+    public void run ()
     {
-        for(Client cl : clients)
-        {
-            System.out.println(cl.broadcastThis(clients.get(clients.size()-1)));
+        String received;
+        do {
+            //Accept message from client on the socket's input stream…
+            received = input.nextLine();
+            System.out.println("message received: " + received);
+            //Echo message back to client on the socket's output stream…
+
+            output.println("ECHO: " + received);
+            //Repeat above until 'QUIT' sent by client…
+        } while (!received.equals("QUIT"));
+        try {
+            if (client != null) {
+                System.out.println("Closing down connection…");
+                client.close();
+            }
+        } catch (IOException ioEx) {
+            System.out.println("Unable to disconnect!");
         }
     }
 

@@ -1,5 +1,5 @@
 package com.company;
 
 public interface Observable {
-    public String broadcastThis(Client client);
+    public void broadcastThis(Client client);
 }
