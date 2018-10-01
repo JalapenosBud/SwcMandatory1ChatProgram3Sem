@@ -3,6 +3,7 @@ package com.company;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Scanner;
 
 public class ClientReceive implements Runnable {
@@ -12,6 +13,16 @@ public class ClientReceive implements Runnable {
 
     @Override
     public void run() {
+
+        try
+        {
+            host = InetAddress.getLocalHost();
+        }
+        catch(UnknownHostException uhEx)
+        {
+            System.out.println("\nHost ID not found!\n");
+            System.exit(1);
+        }
 
         Socket socket = null;
         try

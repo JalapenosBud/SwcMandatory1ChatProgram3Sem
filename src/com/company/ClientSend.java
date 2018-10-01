@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Scanner;
 
 public class ClientSend implements Runnable {
@@ -13,6 +14,16 @@ public class ClientSend implements Runnable {
 
     @Override
     public void run() {
+
+        try
+        {
+            host = InetAddress.getLocalHost();
+        }
+        catch(UnknownHostException uhEx)
+        {
+            System.out.println("\nHost ID not found!\n");
+            System.exit(1);
+        }
 
         Socket socket = null;
         try
