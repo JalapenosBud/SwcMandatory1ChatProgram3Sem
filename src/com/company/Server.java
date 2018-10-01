@@ -12,20 +12,6 @@ import java.util.Scanner;
 
 public class Server extends Thread{
 
-    private String soutString="";
-
-    public String getSoutString() {
-        return soutString;
-    }
-
-    public void setSoutString(String soutString) {
-        this.soutString = soutString;
-    }
-
-
-
-
-
     private Socket client;
     private Scanner input;
 

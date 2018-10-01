@@ -13,6 +13,8 @@ import java.util.List;
 
 public class ServerMain {
 
+    public static int id = 0;
+
     public String getSendThisMSG() {
         return sendThisMSG;
     }
@@ -41,7 +43,8 @@ public class ServerMain {
 
     public static void main(String[] args) {
         ServerMain serverMain = new ServerMain();
-        Client tmpClient = new Client("bob",0,null);
+        Socket mySocket = null;
+
         try{
             serverSocket = new ServerSocket(port);
         }catch(IOException e)
@@ -54,9 +57,11 @@ public class ServerMain {
         do {
 
             try{
-                tmpClient.mySocket = serverSocket.accept();
+                mySocket = serverSocket.accept();
+                id++;
+
                 //her få clients real data instead of hardcode
-                serverMain.addInterestedClientsForBroadcast(tmpClient);
+                serverMain.addInterestedClientsForBroadcast(new Client("test",id,mySocket));
                 serverMain.notifyAllClientsNewClientJoined();
             }
             catch (IOException e)
@@ -64,7 +69,7 @@ public class ServerMain {
                 System.out.println("couldnt connect");
                 System.exit(1);
             }
-            Server handler = new Server(tmpClient.mySocket);
+            Server handler = new Server(mySocket);
             handler.start();
 
         }while(true);
@@ -82,10 +87,8 @@ public class ServerMain {
         PrintWriter output = null;
         String received;
 
-        boolean notifiedReceived = false;
-        for(Client cl : clients)
-        {
-            do {
+            for(Client cl : clients)
+            {
                 try{
                     output = new PrintWriter(cl.mySocket.getOutputStream(), true);
                 }
@@ -96,16 +99,10 @@ public class ServerMain {
                 //Accept message from client on the socket's input stream…
                 received = cl.toString();
                 //Echo message back to client on the socket's output stream…
-                System.out.println(received);
-                System.out.println(clients.get(clients.size()-1));
-                System.out.println("current socket" + cl.mySocket);
-                System.out.println(clients.size());
                 output.println("who joined? " + received);
-                notifiedReceived = true;
                 //Repeat above until 'QUIT' sent by client…
-            } while (!notifiedReceived);
 
-        }
+            }
     }
 
 

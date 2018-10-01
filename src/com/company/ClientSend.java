@@ -13,7 +13,7 @@ public class ClientSend implements Runnable {
     private static final int PORT = 1234;
 
     @Override
-    public void run() {
+    public synchronized void  run() {
 
         try
         {

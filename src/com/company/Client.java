@@ -25,18 +25,6 @@ public class Client implements Observable{
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getChatAlias() {
-        return chatAlias;
-    }
-
-    public void setChatAlias(String chatAlias) {
-        this.chatAlias = chatAlias;
-    }
-
     //id for new client
     private int id = 0;
 
@@ -98,7 +86,7 @@ public class Client implements Observable{
 
 
     @Override
-    public String broadcastThis(Client client) {
+    public void broadcastThis(Client client) {
 
         //ha et client object i parameter
         //i client class ha et id der bliver incrementet for hver gang en ny client bliver lavet i systemet
@@ -106,12 +94,12 @@ public class Client implements Observable{
         //altså hvis det er  1 2 3 og client 2 dc'er, så skal en ny client ikke ha hans id men
         //han kan komme tilbage som id 2 og fortsætte hva han lavede
 
-        return "\ni am " + chatAlias + ", my id is: " + id + "\nand " + client.toString() + " joined my room\n";
+        System.out.println("\ni am " + chatAlias + ", my id is: " + id + "\nand " + client.toString() + " joined my room\n");
     }
 
     @Override
     public String toString() {
-        return "client" + id;
+        return chatAlias + id;
     }
 
 }

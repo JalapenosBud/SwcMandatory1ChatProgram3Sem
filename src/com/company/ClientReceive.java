@@ -12,7 +12,7 @@ public class ClientReceive implements Runnable {
     private static final int PORT = 1234;
 
     @Override
-    public void run() {
+    public synchronized void run() {
 
         try
         {
@@ -28,12 +28,15 @@ public class ClientReceive implements Runnable {
         try
         {
             socket = new Socket(host,PORT);
-            String response;
+            String response = null;
             Scanner networkInput = new Scanner(socket.getInputStream());
 
-            response = networkInput.nextLine();
+            do{
+                response = networkInput.nextLine();
 
-            System.out.println("\nSERVER> " + response);
+                System.out.println("\nSERVER> " + response);
+            }while(!response.equals("QUIT"));
+
         }
         catch (IOException e)
         {
