@@ -22,7 +22,6 @@ public class Client implements Observable{
         startClient();
     }
 
-
     public int getId() {
         return id;
     }

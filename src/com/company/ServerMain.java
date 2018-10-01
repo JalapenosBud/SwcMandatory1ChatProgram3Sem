@@ -12,6 +12,8 @@ public class ServerMain {
 
     static ServerSocket serverSocket;
     private static final int port = 1234;
+
+
     public static void main(String[] args) {
         try{
             serverSocket = new ServerSocket(port);
@@ -22,6 +24,7 @@ public class ServerMain {
             System.exit(1);
         }
 
+        //server object init
         Server server = new Server();
         server.start();
 
@@ -29,6 +32,12 @@ public class ServerMain {
             Socket clientSocket = null;
             try{
                 clientSocket = serverSocket.accept();
+                server.addInterestedClientsForBroadcast(new Client("xXxVirginSlayerxXx",server.getNumberOfLastAddedClient()));
+                if(server.getClients().size() > 0)
+                {
+                    server.notifyAllClientsNewClientJoined();
+                }
+
             }
             catch (IOException e)
             {

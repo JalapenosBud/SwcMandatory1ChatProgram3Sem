@@ -16,8 +16,7 @@ public class ClientHandler extends Thread {
         client = socket;
         try {
             input = new Scanner(client.getInputStream());
-            output = new PrintWriter(
-                    client.getOutputStream(), true);
+            output = new PrintWriter(client.getOutputStream(), true);
         } catch (IOException ioEx) {
             ioEx.printStackTrace();
         }
@@ -27,17 +26,16 @@ public class ClientHandler extends Thread {
     {
         String received;
         do {
-            //Accept message from client on //the socket's input stream…
+            //Accept message from client on the socket's input stream…
             received = input.nextLine();
             System.out.println("message received: " + received);
-            //Echo message back to client on //the socket's output stream…
+            //Echo message back to client on the socket's output stream…
             output.println("ECHO: " + received);
             //Repeat above until 'QUIT' sent by client…
         } while (!received.equals("QUIT"));
         try {
             if (client != null) {
-                System.out.println(
-                        "Closing down connection…");
+                System.out.println("Closing down connection…");
                 client.close();
             }
         } catch (IOException ioEx) {

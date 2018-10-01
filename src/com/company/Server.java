@@ -17,6 +17,16 @@ public class Server extends Thread{
     Client tmpClient = null;
     String fromUser = "";
 
+    public List<Client> getClients() {
+        return clients;
+    }
+
+    //gets length of list - 1
+    public int getNumberOfLastAddedClient()
+    {
+        return clients.size() - 1;
+    }
+
     private List<Client> clients = new ArrayList<>();
 
 
@@ -39,32 +49,5 @@ public class Server extends Thread{
             System.out.println(cl.broadcastThis(clients.get(clients.size()-1)));
         }
     }
-
-    /*void heartbeatIsAlive(float timeToCheck)
-    {
-        //til at køre loop
-        boolean countingTime  = true;
-        //tager tiden nu
-        long test = System.currentTimeMillis();
-
-        while(countingTime)
-        {
-            //hvis det tidspunkt nu minus der hvor vi startede er større end 2 sek
-            //print out
-            if(System.currentTimeMillis() - test > (timeToCheck * 1000))
-            {
-                System.out.println("\n******");
-                System.out.println("new connection inbound!");
-                addInterestedClientsForBroadcast(new Client("Client", clients.size()));
-
-                //System.out.println("2 seconds has passed");
-                notifyAllClientsNewClientJoined();
-                //reset timer
-                test = System.currentTimeMillis();
-                System.out.println("new connection established!");
-                System.out.println("******\n");
-            }
-
-        }*/
 
 }
