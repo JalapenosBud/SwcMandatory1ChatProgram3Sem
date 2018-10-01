@@ -1,18 +1,37 @@
 package com.company;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Server {
+public class Server extends Thread{
+
+    ServerSocket serverSocket = null;
+    int port = 1234;
+    static int clientNo = 0;
+    Client tmpClient = null;
+    String fromUser = "";
 
     private List<Client> clients = new ArrayList<>();
 
 
+    public Server()
+    {
+        super("MySuperServer");
+    }
+
+    //TODO: refactor for low coupling
     public void addInterestedClientsForBroadcast(Client client)
     {
         clients.add(client);
     }
 
+    //TODO: refactor for low coupling
     public void notifyAllClientsNewClientJoined()
     {
         for(Client cl : clients)
@@ -21,7 +40,7 @@ public class Server {
         }
     }
 
-    void heartbeatIsAlive(float timeToCheck)
+    /*void heartbeatIsAlive(float timeToCheck)
     {
         //til at køre loop
         boolean countingTime  = true;
@@ -46,7 +65,6 @@ public class Server {
                 System.out.println("******\n");
             }
 
-        }
+        }*/
 
-    }
 }
