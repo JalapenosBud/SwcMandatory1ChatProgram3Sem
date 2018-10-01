@@ -16,9 +16,6 @@ public class Client implements Observable{
 
     public Socket mySocket;
 
-    private static InetAddress host;
-    private static final int PORT = 1234;
-
     public Client()
     {
         startClient();
@@ -89,55 +86,14 @@ public class Client implements Observable{
 
     public void startClient()
     {
-        try
-        {
-            host = InetAddress.getLocalHost();
-        }
-        catch(UnknownHostException uhEx)
-        {
-            System.out.println("\nHost ID not found!\n");
-            System.exit(1);
-        }
-        sendMessages();
-    }
-    private static void sendMessages()
-    {
-        Socket socket = null;
-        try
-        {
-            socket = new Socket(host,PORT);
-            Scanner networkInput = new Scanner(socket.getInputStream());
-            PrintWriter networkOutput = new PrintWriter(socket.getOutputStream(),true);
+        ClientReceive clientReceive = new ClientReceive();
+        ClientSend clientSend = new ClientSend();
 
-            Scanner userEntry = new Scanner(System.in);
-            String message, response;
-            do
-            {
-                System.out.print( "Enter message ('QUIT' to exit): ");
-                message = userEntry.nextLine();
-                networkOutput.println(message);
-                response = networkInput.nextLine();
+        Thread t1 = new Thread(clientReceive);
+        Thread t2 = new Thread(clientSend);
 
-                System.out.println("\nSERVER> " + response);
-            }while (!message.equals("QUIT"));
-        }
-        catch(IOException ioEx)
-        {
-            ioEx.printStackTrace();
-        }
-        finally
-        {
-            try
-            {
-                System.out.println("\nClosing connection…");
-                socket.close();
-            }
-            catch(IOException ioEx)
-            {
-                System.out.println("Unable to disconnect!");
-                System.exit(1);
-            }
-        }
+        t1.start();
+        t2.start();
     }
 
 
@@ -149,8 +105,7 @@ public class Client implements Observable{
         //måske lav mere persistent på længere sigt, så en gammel client der bliver fjernet kan joine igen
         //altså hvis det er  1 2 3 og client 2 dc'er, så skal en ny client ikke ha hans id men
         //han kan komme tilbage som id 2 og fortsætte hva han lavede
-        if(client.getId() == this.id)
-           return "";
+
         return "\ni am " + chatAlias + ", my id is: " + id + "\nand " + client.toString() + " joined my room\n";
     }
 
@@ -158,4 +113,5 @@ public class Client implements Observable{
     public String toString() {
         return "client" + id;
     }
+
 }

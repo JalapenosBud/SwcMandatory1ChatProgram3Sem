@@ -41,6 +41,7 @@ public class ServerMain {
 
     public static void main(String[] args) {
         ServerMain serverMain = new ServerMain();
+        Client tmpClient = new Client("bob",0,null);
         try{
             serverSocket = new ServerSocket(port);
         }catch(IOException e)
@@ -51,11 +52,11 @@ public class ServerMain {
         }
 
         do {
-            Socket clientSocket = null;
+
             try{
-                clientSocket = serverSocket.accept();
+                tmpClient.mySocket = serverSocket.accept();
                 //her få clients real data instead of hardcode
-                serverMain.addInterestedClientsForBroadcast(new Client("doglover420",1,clientSocket));
+                serverMain.addInterestedClientsForBroadcast(tmpClient);
                 serverMain.notifyAllClientsNewClientJoined();
             }
             catch (IOException e)
@@ -63,7 +64,7 @@ public class ServerMain {
                 System.out.println("couldnt connect");
                 System.exit(1);
             }
-            Server handler = new Server(clientSocket);
+            Server handler = new Server(tmpClient.mySocket);
             handler.start();
 
         }while(true);
@@ -78,10 +79,12 @@ public class ServerMain {
     //TODO: refactor for low coupling
     public void notifyAllClientsNewClientJoined()
     {
+        PrintWriter output = null;
+        String received;
+
+        boolean notifiedReceived = false;
         for(Client cl : clients)
         {
-            PrintWriter output = null;
-            String received;
             do {
                 try{
                     output = new PrintWriter(cl.mySocket.getOutputStream(), true);
@@ -91,21 +94,16 @@ public class ServerMain {
                     e.printStackTrace();
                 }
                 //Accept message from client on the socket's input stream…
-                received =  cl.broadcastThis(clients.get(clients.size()-1));
-                System.out.println("message received: " + received);
+                received = cl.toString();
                 //Echo message back to client on the socket's output stream…
-
-                output.println("ECHO: " + received);
+                System.out.println(received);
+                System.out.println(clients.get(clients.size()-1));
+                System.out.println("current socket" + cl.mySocket);
+                System.out.println(clients.size());
+                output.println("who joined? " + received);
+                notifiedReceived = true;
                 //Repeat above until 'QUIT' sent by client…
-            } while (!received.equals("QUIT"));
-            try {
-                if (cl.mySocket != null) {
-                    System.out.println("Closing down connection…");
-                    cl.mySocket.close();
-                }
-            } catch (IOException ioEx) {
-                System.out.println("Unable to disconnect!");
-            }
+            } while (!notifiedReceived);
 
         }
     }
