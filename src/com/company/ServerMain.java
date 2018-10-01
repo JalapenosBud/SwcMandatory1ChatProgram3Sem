@@ -1,6 +1,7 @@
 package com.company;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.Timestamp;
@@ -11,6 +12,16 @@ import java.util.Date;
 import java.util.List;
 
 public class ServerMain {
+
+    public String getSendThisMSG() {
+        return sendThisMSG;
+    }
+
+    public void setSendThisMSG(String sendThisMSG) {
+        this.sendThisMSG = sendThisMSG;
+    }
+
+    private String sendThisMSG="";
 
     static ServerSocket serverSocket;
     private static final int port = 1234;
@@ -44,7 +55,7 @@ public class ServerMain {
             try{
                 clientSocket = serverSocket.accept();
                 //her få clients real data instead of hardcode
-                serverMain.addInterestedClientsForBroadcast(new Client("doglover420",1));
+                serverMain.addInterestedClientsForBroadcast(new Client("doglover420",1,clientSocket));
                 serverMain.notifyAllClientsNewClientJoined();
             }
             catch (IOException e)
@@ -69,7 +80,33 @@ public class ServerMain {
     {
         for(Client cl : clients)
         {
-            cl.broadcastThis(clients.get(clients.size()-1));
+            PrintWriter output = null;
+            String received;
+            do {
+                try{
+                    output = new PrintWriter(cl.mySocket.getOutputStream(), true);
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+                //Accept message from client on the socket's input stream…
+                received =  cl.broadcastThis(clients.get(clients.size()-1));
+                System.out.println("message received: " + received);
+                //Echo message back to client on the socket's output stream…
+
+                output.println("ECHO: " + received);
+                //Repeat above until 'QUIT' sent by client…
+            } while (!received.equals("QUIT"));
+            try {
+                if (cl.mySocket != null) {
+                    System.out.println("Closing down connection…");
+                    cl.mySocket.close();
+                }
+            } catch (IOException ioEx) {
+                System.out.println("Unable to disconnect!");
+            }
+
         }
     }
 

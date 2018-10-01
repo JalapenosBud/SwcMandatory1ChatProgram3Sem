@@ -14,6 +14,8 @@ import java.util.Scanner;
 
 public class Client implements Observable{
 
+    public Socket mySocket;
+
     private static InetAddress host;
     private static final int PORT = 1234;
 
@@ -56,10 +58,11 @@ public class Client implements Observable{
     //noget condition her**
     private boolean isAlive;
 
-    public Client(String name, int id)
+    public Client(String name, int id, Socket socket)
     {
         this.chatAlias = name;
         this.id = id;
+        mySocket = socket;
     }
 
     //heartbeat isalive method every minute to the server
@@ -139,7 +142,7 @@ public class Client implements Observable{
 
 
     @Override
-    public void broadcastThis(Client client) {
+    public String broadcastThis(Client client) {
 
         //ha et client object i parameter
         //i client class ha et id der bliver incrementet for hver gang en ny client bliver lavet i systemet
@@ -147,8 +150,8 @@ public class Client implements Observable{
         //altså hvis det er  1 2 3 og client 2 dc'er, så skal en ny client ikke ha hans id men
         //han kan komme tilbage som id 2 og fortsætte hva han lavede
         if(client.getId() == this.id)
-            System.out.println("");
-        System.out.println("\ni am " + chatAlias + ", my id is: " + id + "\nand " + client.toString() + " joined my room\n");
+           return "";
+        return "\ni am " + chatAlias + ", my id is: " + id + "\nand " + client.toString() + " joined my room\n";
     }
 
     @Override
