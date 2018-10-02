@@ -1,4 +1,4 @@
-package com.company;
+package com.company.Client;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,6 +11,7 @@ public class ClientSend implements Runnable {
 
     private static InetAddress host;
     private static final int PORT = 1234;
+
 
     @Override
     public synchronized void  run() {
@@ -31,6 +32,7 @@ public class ClientSend implements Runnable {
             socket = new Socket(host,PORT);
 
             PrintWriter networkOutput = new PrintWriter(socket.getOutputStream(),true);
+
 
             Scanner userEntry = new Scanner(System.in);
             String message;

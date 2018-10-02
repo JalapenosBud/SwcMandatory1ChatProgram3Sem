@@ -1,4 +1,4 @@
-package com.company;
+package com.company.Server;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,10 +14,6 @@ public class Server extends Thread{
 
     private Socket client;
     private Scanner input;
-
-    public PrintWriter getOutput() {
-        return output;
-    }
 
     private PrintWriter output;
 

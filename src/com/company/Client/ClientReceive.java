@@ -1,4 +1,4 @@
-package com.company;
+package com.company.Client;
 
 import java.io.IOException;
 import java.net.InetAddress;
