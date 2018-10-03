@@ -35,18 +35,22 @@ public class Server extends Thread{
     {
         boolean hasClientConnected = false;
         String received;
-        
+        System.out.println("waiting for client to connect");
         do {
             
             received = input.nextLine();
             
-            if(received.contains("JOIN")) hasClientConnected = true;
+            if(received.contains("JOIN"))
+            {
+                output.println("J_OK");
+                System.out.println("client: " + received);
+                hasClientConnected = true;
+            }
             
         }while(!received.contains("JOIN") && !hasClientConnected);
         
         
         do {
-            //output.println("Hello" + );
             received = input.nextLine();
             
             System.out.println("message received: " + received);
@@ -72,23 +76,24 @@ public class Server extends Thread{
     {
         //temporary array to store user name
         String[] tempInfo;
-        
+    
         tempInfo = info.split(Pattern.quote(" "));
-        
-        tempInfo = info.split(Pattern.quote(","));
-        
+    
+        String[] tempinfo2;
+        tempinfo2 = tempInfo[1].split(Pattern.quote(","));
+    
         String[] newTmp;
-        
-        newTmp = tempInfo[1].split(Pattern.quote(":"));
-        
-        String[] finalTemp = {tempInfo[0],newTmp[0],newTmp[1]};
-        
+    
+        newTmp = tempinfo2[1].split(Pattern.quote(":"));
+    
+        String[] finalTemp = {tempInfo[0],tempinfo2[0],newTmp[0],newTmp[1]};
+    
         String tmp = "";
         for (int i = 0; i < finalTemp.length; i++) {
             tmp = finalTemp[i].replaceAll("^<<|>>$","");
             finalTemp[i] = tmp;
         }
-        
+    
         return  finalTemp;
     }
 
