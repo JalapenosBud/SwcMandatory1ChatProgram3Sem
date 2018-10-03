@@ -38,6 +38,11 @@ public class ClientSend implements Runnable {
             String message;
             do
             {
+                //Først send user name med join protocol
+                //På server vent som den første besked kun på dem med join protocol, ellers return
+                System.out.println("please enter your username:");
+                message = userEntry.nextLine();
+                
                 System.out.print( "Enter message ('QUIT' to exit): ");
                 message = userEntry.nextLine();
                 networkOutput.println(message);

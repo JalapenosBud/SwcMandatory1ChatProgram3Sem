@@ -9,9 +9,12 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class Server extends Thread{
 
+    String[] clientInfo = new String[3];
+    
     private Socket client;
     private Scanner input;
 
@@ -27,19 +30,36 @@ public class Server extends Thread{
             ioEx.printStackTrace();
         }
     }
+    
+    public void splitOnCrocs(String info)
+    {
+        String[] tempInfo = new String[3];
+        tempInfo = info.split(Pattern.quote(","));
+    }
 
     public void run ()
     {
+        boolean hasClientConnected = false;
         String received;
+        
         do {
-            //Accept message from client on the socket's input stream…
+            
             received = input.nextLine();
+            clientInfo = received.split(Pattern.quote("<<"));
+            if(received.contains("JOIN")) hasClientConnected = true;
+            
+        }while(!received.contains("JOIN") && !hasClientConnected);
+        
+        
+        do {
+            //output.println("Hello" + );
+            received = input.nextLine();
+            
             System.out.println("message received: " + received);
-            //Echo message back to client on the socket's output stream…
 
             output.println("ECHO: " + received);
-            //Repeat above until 'QUIT' sent by client…
-        } while (!received.equals("QUIT"));
+            
+        } while (!received.equals("QUIT") && hasClientConnected);
         try {
             if (client != null) {
                 System.out.println("Closing down connection…");
