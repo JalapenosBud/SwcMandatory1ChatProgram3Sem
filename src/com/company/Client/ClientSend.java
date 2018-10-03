@@ -12,6 +12,7 @@ public class ClientSend implements Runnable {
     private static InetAddress host;
     private static final int PORT = 1234;
 
+    Client client;
 
     @Override
     public synchronized void  run() {
@@ -32,22 +33,24 @@ public class ClientSend implements Runnable {
             socket = new Socket(host,PORT);
 
             PrintWriter networkOutput = new PrintWriter(socket.getOutputStream(),true);
+            Scanner networkInput = new Scanner(socket.getInputStream());
 
 
             Scanner userEntry = new Scanner(System.in);
             String message;
+            String response = "";
             do
             {
                 //Først send user name med join protocol
                 //På server vent som den første besked kun på dem med join protocol, ellers return
                 System.out.println("please enter your username:");
-                message = userEntry.nextLine();
+                String name = userEntry.nextLine();
                 
-                System.out.print( "Enter message ('QUIT' to exit): ");
-                message = userEntry.nextLine();
-                networkOutput.println(message);
+                client = new Client(name,socket.getInetAddress(),socket.getPort());
+                networkOutput.println(client.sendJOIN());
+                response = networkInput.nextLine();
 
-            }while (!message.equals("QUIT"));
+            }while (!response.equals("J_OK"));
         }
         catch(IOException ioEx)
         {

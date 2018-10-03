@@ -14,20 +14,26 @@ public class Client{
         startClient();
     }
 
-    private void enterUserName()
+    public Client(String name, InetAddress ipAddress, int port)
+    {
+        this.name = name;
+        this.ipAddress = ipAddress;
+        this.port = port;
+    }
+    
+    public void enterUserName()
     {
         System.out.println("Please enter your username");
         Scanner input = new Scanner(System.in);
 
-        String username = input.nextLine();
-
-        name = username;
+        name = input.nextLine();
+        
 
     }
 
-    public String JOIN()
+    public String sendJOIN()
     {
-        return "JOIN " + name + ", 127.0.0.1:8080";
+        return "JOIN " + name + ", <<" + ipAddress + ">>:<<" + port+">>";
     }
 
 
