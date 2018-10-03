@@ -30,12 +30,6 @@ public class Server extends Thread{
             ioEx.printStackTrace();
         }
     }
-    
-    public void splitOnCrocs(String info)
-    {
-        String[] tempInfo = new String[3];
-        tempInfo = info.split(Pattern.quote(","));
-    }
 
     public void run ()
     {
@@ -45,7 +39,7 @@ public class Server extends Thread{
         do {
             
             received = input.nextLine();
-            clientInfo = received.split(Pattern.quote("<<"));
+            
             if(received.contains("JOIN")) hasClientConnected = true;
             
         }while(!received.contains("JOIN") && !hasClientConnected);
@@ -68,6 +62,34 @@ public class Server extends Thread{
         } catch (IOException ioEx) {
             System.out.println("Unable to disconnect!");
         }
+    }
+    
+    
+    //to receive user string and strip it off << and >>
+    //then save each value in an array
+    //glemte selve beskeden hehe
+    public static String[] splitOnCrocs(String info)
+    {
+        //temporary array to store user name
+        String[] tempInfo;
+        
+        tempInfo = info.split(Pattern.quote(" "));
+        
+        tempInfo = info.split(Pattern.quote(","));
+        
+        String[] newTmp;
+        
+        newTmp = tempInfo[1].split(Pattern.quote(":"));
+        
+        String[] finalTemp = {tempInfo[0],newTmp[0],newTmp[1]};
+        
+        String tmp = "";
+        for (int i = 0; i < finalTemp.length; i++) {
+            tmp = finalTemp[i].replaceAll("^<<|>>$","");
+            finalTemp[i] = tmp;
+        }
+        
+        return  finalTemp;
     }
 
 }
