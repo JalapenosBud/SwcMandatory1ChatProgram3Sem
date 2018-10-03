@@ -7,10 +7,10 @@ import java.util.regex.Pattern;
 public class ClientMain {
     public static void main(String[] args)
     {
-        //Client client = new Client();
+        Client client = new Client();
         //client.heartbeatIsAlive(2);
 
-        String JOIN = "JOIN <<myusername>>,<<127.0.0.1>>:<<8080>>";
+        //String JOIN = "JOIN <<myusername>>,<<127.0.0.1>>:<<8080>>";
         
     }
     

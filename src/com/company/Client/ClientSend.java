@@ -9,6 +9,7 @@ import java.util.Scanner;
 
 public class ClientSend implements Runnable {
 
+    boolean connectionEstablished = false;
     private static InetAddress host;
     private static final int PORT = 1234;
 
@@ -37,7 +38,7 @@ public class ClientSend implements Runnable {
 
 
             Scanner userEntry = new Scanner(System.in);
-            String message;
+            String message = "";
             String response = "";
             do
             {
@@ -50,7 +51,18 @@ public class ClientSend implements Runnable {
                 networkOutput.println(client.sendJOIN());
                 response = networkInput.nextLine();
 
+                if(response.equals("J_OK"))
+                {
+                    connectionEstablished = true;
+                }
+                
             }while (!response.equals("J_OK"));
+            
+            do {
+                System.out.println("please enter a message");
+                message = userEntry.nextLine();
+                networkOutput.println(message);
+            }while(connectionEstablished && !message.equals("***QUIT***"));
         }
         catch(IOException ioEx)
         {
