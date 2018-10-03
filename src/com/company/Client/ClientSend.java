@@ -53,15 +53,18 @@ public class ClientSend implements Runnable {
 
                 if(response.equals("J_OK"))
                 {
+                    System.out.println("SERVER> " + response);
                     connectionEstablished = true;
                 }
                 
-            }while (!response.equals("J_OK"));
+            }while (!response.equals("J_OK") && !connectionEstablished);
             
             do {
                 System.out.println("please enter a message");
                 message = userEntry.nextLine();
                 networkOutput.println(message);
+                
+                System.out.println("SERVER> " + response);
             }while(connectionEstablished && !message.equals("***QUIT***"));
         }
         catch(IOException ioEx)
