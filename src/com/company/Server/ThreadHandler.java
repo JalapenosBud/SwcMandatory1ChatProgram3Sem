@@ -1,5 +1,7 @@
 package com.company.Server;
 
+import com.company.Client.Client;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,7 +16,7 @@ import java.util.regex.Pattern;
 public class Server extends Thread{
 
     String[] clientInfo = new String[3];
-    
+    List<Client> clients = new ArrayList<>();
     private Socket client;
     private Scanner input;
 
@@ -35,9 +37,13 @@ public class Server extends Thread{
     {
         boolean hasClientConnected = false;
         String received;
+
+
+
+        //------incoming connection---------
         System.out.println("waiting for client to connect");
         do {
-            
+            output.println("go away");
             received = input.nextLine();
             
             if(received.contains("JOIN"))
@@ -48,8 +54,9 @@ public class Server extends Thread{
             }
             
         }while(!received.contains("JOIN") && !hasClientConnected);
-        
-        
+        //------incoming connection---------
+
+        //----------when client has connected--------
         do {
             received = input.nextLine();
             
@@ -67,7 +74,7 @@ public class Server extends Thread{
             System.out.println("Unable to disconnect!");
         }
     }
-    
+    //----------when client has connected--------
     
     //to receive user string and strip it off << and >>
     //then save each value in an array
@@ -81,7 +88,8 @@ public class Server extends Thread{
     
         String[] tempinfo2;
         tempinfo2 = tempInfo[1].split(Pattern.quote(","));
-    
+
+        //--
         String[] newTmp;
     
         newTmp = tempinfo2[1].split(Pattern.quote(":"));

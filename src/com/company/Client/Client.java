@@ -1,6 +1,7 @@
 package com.company.Client;
 
 import java.net.InetAddress;
+import java.net.Socket;
 import java.util.Scanner;
 
 public class Client{
@@ -8,6 +9,7 @@ public class Client{
     String name;
     InetAddress ipAddress;
     int port;
+    Socket socket;
 
     public Client()
     {
@@ -19,16 +21,7 @@ public class Client{
         this.name = name;
         this.ipAddress = ipAddress;
         this.port = port;
-    }
-    
-    public void enterUserName()
-    {
-        System.out.println("Please enter your username");
-        Scanner input = new Scanner(System.in);
-
-        name = input.nextLine();
-        
-
+        this.socket = socket;
     }
 
     public String sendJOIN()
