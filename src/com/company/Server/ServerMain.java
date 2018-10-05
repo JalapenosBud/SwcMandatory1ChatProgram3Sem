@@ -5,8 +5,7 @@ import com.company.Client.Client;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class ServerMain {
@@ -14,7 +13,7 @@ public class ServerMain {
     static ServerSocket serverSocket;
     private static final int port = 1234;
 
-    private List<Client> clients = new ArrayList<>();
+    public static Map<Client,Socket> clientMap = new HashMap<>();
 
     public static void main(String[] args) {
 
@@ -33,13 +32,22 @@ public class ServerMain {
 
             try{
                 mySocket = serverSocket.accept();
+                /*
+                ha et set eller liste der adder ny client
+                gem denne socket i en liste
+                brug socket liste i parameter
+                smid liste ned
+                tag sidste addede socket og tilføj i liste
+                 */
+
             }
             catch (IOException e)
             {
                 System.out.println("couldnt connect");
                 System.exit(1);
             }
-            Server handler = new Server(mySocket);
+            System.out.println("ny onnection " + mySocket);
+            ThreadHandler handler = new ThreadHandler(mySocket,clientMap);
             handler.start();
 
         }while(true);
