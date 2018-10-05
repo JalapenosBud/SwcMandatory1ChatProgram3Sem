@@ -32,6 +32,8 @@ public class ThreadHandler extends Thread{
 
     private PrintWriter output;
 
+    boolean hasAuthenticated = false;
+
     public ThreadHandler(Socket socket, Map<Client,Socket> clientSocketMap) {
         //Set up reference to associated socket…
         client = socket;
@@ -62,11 +64,29 @@ public class ThreadHandler extends Thread{
                 System.out.println("client: " + received);
 
                 try {
-                    clientSocketMap.put(returnNewClient(received),client);
+
+                    Client tmpClient = returnNewClient(received);
+
+                    if(clientSocketMap.size() != 0)
+                    {
+                        if(clientSocketMap.containsKey(tmpClient.getName()))
+                        {
+                            output.println("Server already has a user with username: " + tmpClient.getName());
+                        }
+                        else
+                        {
+
+                            try {
+                                clientSocketMap.put(returnNewClient(received),client);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
                 }catch (IOException e) {
                     e.printStackTrace();
                 }
-                    for (Client c : clientSocketMap.keySet()) {
+                for (Client c : clientSocketMap.keySet()) {
                         System.out.println("hi from: " + c.getName() + ", which has: " + c.getIpAddress() + " as address");
                     }
 
