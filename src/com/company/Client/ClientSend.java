@@ -47,8 +47,10 @@ public class ClientSend implements Runnable {
                 System.out.println("please enter your username:");
                 String name = userEntry.nextLine();
                 
-                client = new Client(name,socket.getInetAddress(),socket.getPort());
+                client = new Client(name,STRIPTHEFUCKINGSLASHOFFMYIPADDRESS(socket),socket.getPort());
+
                 networkOutput.println(client.sendJOIN());
+
                 response = networkInput.nextLine();
 
                 if(response.equals("J_OK"))
@@ -84,5 +86,13 @@ public class ClientSend implements Runnable {
                 System.exit(1);
             }
         }
+    }
+
+    public InetAddress STRIPTHEFUCKINGSLASHOFFMYIPADDRESS(Socket ip) throws UnknownHostException {
+        String tmp = ip.toString();
+        String newtmp = tmp.replaceAll("/","");
+
+        return InetAddress.getByName(newtmp);
+
     }
 }
