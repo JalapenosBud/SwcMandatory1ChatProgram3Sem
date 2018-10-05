@@ -66,14 +66,10 @@ public class ThreadHandler extends Thread{
                 }catch (IOException e) {
                     e.printStackTrace();
                 }
-                try {
-                    for (Client c: clientSocketMap.keySet()) {
-                        System.out.println("hi from: " + c);
+                    for (Client c : clientSocketMap.keySet()) {
+                        System.out.println("hi from: " + c.getName() + ", which has: " + c.getIpAddress() + " as address");
                     }
-                    System.out.println(clientSocketMap.get(returnNewClient(received)) + " has joined");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+
                 hasClientConnected = true;
             }
             else
