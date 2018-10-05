@@ -7,6 +7,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
+import static com.company.Utilities.StringUtilities.STRIPTHEFUCKINGSLASHOFFMYIPADDRESS;
+
 public class ClientSend implements Runnable {
 
     boolean connectionEstablished = false;
@@ -86,13 +88,5 @@ public class ClientSend implements Runnable {
                 System.exit(1);
             }
         }
-    }
-
-    public InetAddress STRIPTHEFUCKINGSLASHOFFMYIPADDRESS(Socket ip) throws UnknownHostException {
-        String tmp = ip.toString();
-        String newtmp = tmp.replaceAll("/","");
-
-        return InetAddress.getByName(newtmp);
-
     }
 }

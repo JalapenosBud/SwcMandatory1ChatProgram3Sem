@@ -6,8 +6,40 @@ import java.util.Scanner;
 
 public class Client{
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public Socket getSocket() {
+        return socket;
+    }
+
+    public void setSocket(Socket socket) {
+        this.socket = socket;
+    }
+
     String name;
-    InetAddress ipAddress;
+    String ipAddress;
     int port;
     Socket socket;
 
@@ -16,7 +48,7 @@ public class Client{
         startClient();
     }
 
-    public Client(String name, InetAddress ipAddress, int port)
+    public Client(String name, String ipAddress, int port)
     {
         this.name = name;
         this.ipAddress = ipAddress;
@@ -29,6 +61,10 @@ public class Client{
         return "JOIN " + name + ", <<" + ipAddress + ">>:<<" + port+">>";
     }
 
+    @Override
+    public String toString() {
+        return "" + name + ", " + ipAddress+  ":" + port;
+    }
 
     //heartbeat isalive method every minute to the server
     void heartbeatIsAlive(float timeToCheck)
