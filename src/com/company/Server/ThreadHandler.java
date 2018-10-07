@@ -54,7 +54,37 @@ public class ThreadHandler extends Thread{
         System.out.println("waiting for client to connect");
         do {
             received = input.nextLine();
+
             if(received.contains("JOIN"))
+            {
+                try {
+                    Client tmpClient = returnNewClient(received);
+                    if(clients.size() > 0)
+                    {
+                        for (Client c : clients)
+                        {
+                            if(c.getName().equals(tmpClient.getName()))
+                            {
+                                output.println("sorry, username already exists, try again");
+                                break;
+                            }
+                            else
+                            {
+                                output.println("welcome to the server " + tmpClient.getName());
+                                clients.add(tmpClient);
+                                System.out.println(tmpClient.getName() + " was added to the server");
+                            }
+                        }
+                    }
+
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            /*if(received.contains("JOIN"))
             {
                 //error handling here with duplicate user name etc
                 try {
@@ -65,10 +95,12 @@ public class ThreadHandler extends Thread{
                         if(clients.contains(tmpClient.getName()))
                         {
                             output.println("Server already has a user with username: " + tmpClient.getName());
+                            break;
                         }
                         else
                         {
                             clients.add(tmpClient);
+                            output.println("J_OK");
                         }
                     }
                     else
@@ -87,9 +119,9 @@ public class ThreadHandler extends Thread{
             else
             {
                 output.println("J_ER <<501: Unknown command>>: <<msg: command not recognized, check settings>>");
-            }
-            output.println("J_OK");
-            System.out.println("client: " + received);
+            }*/
+
+           // System.out.println("client: " + received);
         }while(!received.contains("JOIN") && !hasClientConnected);
         //------incoming connection---------
 
