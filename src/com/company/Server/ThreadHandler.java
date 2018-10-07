@@ -55,82 +55,41 @@ public class ThreadHandler extends Thread{
         do {
             received = input.nextLine();
 
-            if(received.contains("JOIN"))
-            {
-                try {
-                    Client tmpClient = returnNewClient(received);
-                    if(clients.size() > 0)
+            try {
+                Client tmpClient = returnNewClient(received);
+                if(received.contains("JOIN") && clients.size() > 0)
+                {
+                    System.out.println(clients.size() + " exists on server");
+                    for (Client c : clients)
                     {
-                        for (Client c : clients)
+                        if(c.getName().equals(tmpClient.getName()))
                         {
-                            if(c.getName().equals(tmpClient.getName()))
-                            {
-                                output.println("sorry, username already exists, try again");
-                                break;
-                            }
-                            else
-                            {
-                                hasClientConnected = true;
-                                output.println("welcome to the server " + tmpClient.getName());
-                                clients.add(tmpClient);
-                                System.out.println(tmpClient.getName() + " was added to the server");
-                            }
-                        }
-                    }
-                    else
-                    {
-                        hasClientConnected = true;
-                        output.println("welcome to the server " + tmpClient.getName());
-                        clients.add(tmpClient);
-                        System.out.println(tmpClient.getName() + " was added to the server");
-                    }
-
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            }
-
-            /*if(received.contains("JOIN"))
-            {
-                //error handling here with duplicate user name etc
-                try {
-                    Client tmpClient = returnNewClient(received);
-
-                    if(clients.size() > 0)
-                    {
-                        if(clients.contains(tmpClient.getName()))
-                        {
-                            output.println("Server already has a user with username: " + tmpClient.getName());
-                            break;
+                            output.println("sorry, " + tmpClient.getName() + " already exists, try again");
+                            hasClientConnected = false;
                         }
                         else
                         {
-                            clients.add(tmpClient);
+
                             output.println("J_OK");
+                            output.println("welcome to the server " + tmpClient.getName());
+                            clients.add(tmpClient);
+                            System.out.println(tmpClient.getName() + " was added to the server");
+                            hasClientConnected = true;
                         }
                     }
-                    else
-                    {
-                        clients.add(tmpClient);
-                    }
-                }catch (IOException e) {
-                    e.printStackTrace();
+                } else if(received.contains("JOIN") && clients.size() == 0)
+                {
+                    output.println("J_OK");
+                    System.out.println("server is empty");
+                    output.println("welcome to the server " + tmpClient.getName());
+                    clients.add(tmpClient);
+                    System.out.println(tmpClient.getName() + " was added to the server");
+                    hasClientConnected = true;
                 }
-                for (Client c : clients) {
-                        System.out.println("hi from: " + c.getName() + ", which has: " + c.getIpAddress() + " as address");
-                    }
-
-                hasClientConnected = true;
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            else
-            {
-                output.println("J_ER <<501: Unknown command>>: <<msg: command not recognized, check settings>>");
-            }*/
-
-           // System.out.println("client: " + received);
-        }while(!received.contains("JOIN") && !hasClientConnected);
+        }while(!hasClientConnected);
         //------incoming connection---------
 
         //----------when client has connected--------
