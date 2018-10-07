@@ -53,25 +53,27 @@ public class ThreadHandler extends Thread{
         //------incoming connection---------
         System.out.println("waiting for client to connect");
         do {
+            //client msg
             received = input.nextLine();
 
             try {
                 Client tmpClient = returnNewClient(received);
+                //if msg = join and list is not 0
                 if(received.contains("JOIN") && clients.size() > 0)
                 {
                     System.out.println(clients.size() + " exists on server");
-                    for (Client c : clients)
+                    for(int i = 0; i < clients.size(); i++)
                     {
-                        if(c.getName().equals(tmpClient.getName()))
+                        if(clients.get(i).getName().equals(tmpClient.getName()))
                         {
-                            output.println("sorry, " + tmpClient.getName() + " already exists, try again");
+                            output.println("J_ERR" + " sorry, " + tmpClient.getName() + " already exists, try again");
+                            output.println();
                             hasClientConnected = false;
                         }
                         else
                         {
 
                             output.println("J_OK");
-                            output.println("welcome to the server " + tmpClient.getName());
                             clients.add(tmpClient);
                             System.out.println(tmpClient.getName() + " was added to the server");
                             hasClientConnected = true;
@@ -79,10 +81,12 @@ public class ThreadHandler extends Thread{
                     }
                 } else if(received.contains("JOIN") && clients.size() == 0)
                 {
+                    //send msg back
                     output.println("J_OK");
+                    //add client
                     System.out.println("server is empty");
-                    output.println("welcome to the server " + tmpClient.getName());
                     clients.add(tmpClient);
+
                     System.out.println(tmpClient.getName() + " was added to the server");
                     hasClientConnected = true;
                 }
@@ -101,6 +105,8 @@ public class ThreadHandler extends Thread{
             output.println("ECHO: " + received);
             
         } while (!received.equals("QUIT") && hasClientConnected);
+        //----------when client has connected--------
+
         try {
             if (client != null) {
                 System.out.println("Closing down connection…");
