@@ -25,19 +25,16 @@ public class ThreadHandler extends Thread{
     String[] clientInfo = new String[3];
     List<Client> clients = new ArrayList<>();
 
-    Map<Client,Socket> clientSocketMap;
+    private PrintWriter output;
 
     private Socket client;
     private Scanner input;
-
-    private PrintWriter output;
-
     boolean hasAuthenticated = false;
 
-    public ThreadHandler(Socket socket, Map<Client,Socket> clientSocketMap) {
+    public ThreadHandler(Socket socket, List<Client> clients) {
         //Set up reference to associated socket…
         client = socket;
-        this.clientSocketMap = clientSocketMap;
+        this.clients = clients;
         try {
             input = new Scanner(client.getInputStream());
             output = new PrintWriter(client.getOutputStream(), true);
@@ -60,33 +57,28 @@ public class ThreadHandler extends Thread{
             if(received.contains("JOIN"))
             {
                 //error handling here with duplicate user name etc
-                output.println("J_OK");
-                System.out.println("client: " + received);
-
                 try {
-
                     Client tmpClient = returnNewClient(received);
 
-                    if(clientSocketMap.size() != 0)
+                    if(clients.size() > 0)
                     {
-                        if(clientSocketMap.containsKey(tmpClient.getName()))
+                        if(clients.contains(tmpClient.getName()))
                         {
                             output.println("Server already has a user with username: " + tmpClient.getName());
                         }
                         else
                         {
-
-                            try {
-                                clientSocketMap.put(returnNewClient(received),client);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                            clients.add(tmpClient);
                         }
+                    }
+                    else
+                    {
+                        clients.add(tmpClient);
                     }
                 }catch (IOException e) {
                     e.printStackTrace();
                 }
-                for (Client c : clientSocketMap.keySet()) {
+                for (Client c : clients) {
                         System.out.println("hi from: " + c.getName() + ", which has: " + c.getIpAddress() + " as address");
                     }
 
@@ -96,7 +88,8 @@ public class ThreadHandler extends Thread{
             {
                 output.println("J_ER <<501: Unknown command>>: <<msg: command not recognized, check settings>>");
             }
-            
+            output.println("J_OK");
+            System.out.println("client: " + received);
         }while(!received.contains("JOIN") && !hasClientConnected);
         //------incoming connection---------
 

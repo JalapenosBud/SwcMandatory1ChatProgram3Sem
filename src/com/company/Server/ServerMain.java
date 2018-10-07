@@ -13,7 +13,7 @@ public class ServerMain {
     static ServerSocket serverSocket;
     private static final int port = 1234;
 
-    public static Map<Client,Socket> clientMap = new HashMap<>();
+    public static List<Client> clients = new ArrayList<>();
 
     public static void main(String[] args) {
 
@@ -47,7 +47,7 @@ public class ServerMain {
                 System.exit(1);
             }
             System.out.println("ny onnection " + mySocket);
-            ThreadHandler handler = new ThreadHandler(mySocket,clientMap);
+            ThreadHandler handler = new ThreadHandler(mySocket,clients);
             handler.start();
 
         }while(true);
