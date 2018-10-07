@@ -70,11 +70,19 @@ public class ThreadHandler extends Thread{
                             }
                             else
                             {
+                                hasClientConnected = true;
                                 output.println("welcome to the server " + tmpClient.getName());
                                 clients.add(tmpClient);
                                 System.out.println(tmpClient.getName() + " was added to the server");
                             }
                         }
+                    }
+                    else
+                    {
+                        hasClientConnected = true;
+                        output.println("welcome to the server " + tmpClient.getName());
+                        clients.add(tmpClient);
+                        System.out.println(tmpClient.getName() + " was added to the server");
                     }
 
 
