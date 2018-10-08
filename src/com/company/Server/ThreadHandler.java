@@ -29,7 +29,10 @@ public class ThreadHandler extends Thread{
 
     private Socket client;
     private Scanner input;
-    boolean hasAuthenticated = false;
+
+    private Client thisClient;
+
+    boolean programAlive = true;
 
     public ThreadHandler(Socket socket, List<Client> clients) {
         //Set up reference to associated socket…
@@ -43,21 +46,86 @@ public class ThreadHandler extends Thread{
         }
     }
 
-    public void run ()
+    public synchronized void run ()
     {
         boolean hasClientConnected = false;
         String received;
 
-
-
         //------incoming connection---------
         System.out.println("waiting for client to connect");
-        do {
-            //client msg
-            received = input.nextLine();
 
-            try {
-                Client tmpClient = returnNewClient(received);
+        while(programAlive)
+        {
+            if(!hasClientConnected)
+            {
+                //client msg
+                received = input.nextLine();
+                String[] tmpInfo = splitOnCrocs(received);
+
+                switch (tmpInfo[0])
+                {
+                    case "JOIN":
+                    {
+                        //if there already are people on the server
+                        if(clients.size() > 0)
+                        {
+                            //loop through
+                            for(int i = 0; i < clients.size(); i++)
+                            {
+                                //get name of clients and check if exists
+                                if(clients.get(i).getName().equals(tmpInfo[1]))
+                                {
+                                    output.println("J_ERR" + " sorry, " + tmpInfo[1] + " already exists, try again");
+                                    hasClientConnected = false;
+                                }
+                                else
+                                {
+                                    Client tmpClient = null;
+                                    try {
+                                        tmpClient = returnNewClient(received);
+                                        thisClient = tmpClient;
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    clients.add(thisClient);
+                                    output.println("J_OK");
+
+                                    System.out.println(tmpClient.getName() + " was added to the server");
+                                    hasClientConnected = true;
+                                }
+                            }
+                        }
+                        else if(clients.size() == 0)
+                        {
+                            Client tmpClient = null;
+                            try {
+                                tmpClient = returnNewClient(received);
+                                thisClient = tmpClient;
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            clients.add(thisClient);
+                            output.println("J_OK " + " user " + thisClient.getName() + " has been added.");
+                        }
+                        //output.println("J_OK you have joined");
+                        hasClientConnected = true;
+                    }
+                }
+            }
+            if(hasClientConnected)
+            {
+                received = input.nextLine();
+                System.out.println(thisClient.getName() + " has joined.");
+
+            }
+        }
+
+
+/*
+try {
+
                 //if msg = join and list is not 0
                 if(received.contains("JOIN") && clients.size() > 0)
                 {
@@ -67,7 +135,6 @@ public class ThreadHandler extends Thread{
                         if(clients.get(i).getName().equals(tmpClient.getName()))
                         {
                             output.println("J_ERR" + " sorry, " + tmpClient.getName() + " already exists, try again");
-                            output.println();
                             hasClientConnected = false;
                         }
                         else
@@ -79,7 +146,8 @@ public class ThreadHandler extends Thread{
                             hasClientConnected = true;
                         }
                     }
-                } else if(received.contains("JOIN") && clients.size() == 0)
+                }
+                else if(received.contains("JOIN") && clients.size() == 0)
                 {
                     //send msg back
                     output.println("J_OK");
@@ -90,20 +158,15 @@ public class ThreadHandler extends Thread{
                     System.out.println(tmpClient.getName() + " was added to the server");
                     hasClientConnected = true;
                 }
+
+                if(hasClientConnected)
+                {
+                    output.println("You are now connected");
+                    //received =
+                }
             } catch (IOException e) {
                 e.printStackTrace();
-            }
-        }while(!hasClientConnected);
-        //------incoming connection---------
-
-        //----------when client has connected--------
-        do {
-            received = input.nextLine();
-            
-            System.out.println("message received: " + received);
-            
-        } while (!received.equals("QUIT") && hasClientConnected);
-        //----------when client has connected--------
+            }*/
 
         try {
             if (client != null) {
@@ -117,7 +180,14 @@ public class ThreadHandler extends Thread{
     //----------when client has connected--------
 
     public Client returnNewClient(String stringFromClient) throws IOException {
+        /**
+         * 0, = JOIN MSG
+         * 1, = USERNAME
+         * 2, = IP ADDRESS
+         * 3, = PORT
+         */
         String[] tmpArr = splitOnCrocs(stringFromClient);
+        //pass in ip address
         Socket tmpSocket = new Socket(tmpArr[2],1234);
         return new Client(tmpArr[1], STRIPTHEFUCKINGSLASHOFFMYIPADDRESS(tmpSocket),Integer.parseInt(tmpArr[3]));
     }

@@ -31,6 +31,7 @@ public class ServerMain {
         do {
 
             try{
+                //System.out.println("\u001B[33mHello");
                 mySocket = serverSocket.accept();
                 /*
                 ha et set eller liste der adder ny client
@@ -46,7 +47,7 @@ public class ServerMain {
                 System.out.println("couldnt connect");
                 System.exit(1);
             }
-            System.out.println("ny onnection " + mySocket);
+            //System.out.println("ny connection " + mySocket);
             ThreadHandler handler = new ThreadHandler(mySocket,clients);
             handler.start();
 
