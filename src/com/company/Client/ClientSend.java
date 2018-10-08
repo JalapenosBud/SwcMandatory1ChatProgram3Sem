@@ -18,7 +18,7 @@ public class ClientSend implements Runnable {
     Client client;
 
     @Override
-    public void  run() {
+    public void run() {
 
         try
         {
@@ -33,6 +33,7 @@ public class ClientSend implements Runnable {
         Socket socket = null;
         try
         {
+            System.out.println("ClientSend waits to send message");
             socket = new Socket(host,PORT);
 
             PrintWriter networkOutput = new PrintWriter(socket.getOutputStream(),true);
@@ -40,38 +41,50 @@ public class ClientSend implements Runnable {
 
 
             Scanner userEntry = new Scanner(System.in);
+
+            //this is the message the client sends
             String message = "";
+
+            //this is the response client gets from the server
             String response = "";
             do
             {
+                //read respond message from server
+
+
+
                 //Først send user name med join protocol
                 //På server vent som den første besked kun på dem med join protocol, ellers return
                 System.out.println("please enter your username:");
                 String name = userEntry.nextLine();
-                
+
+                //create temp client
                 client = new Client(name,STRIPTHEFUCKINGSLASHOFFMYIPADDRESS(socket),socket.getPort());
 
+                //sent join msg with new compiled client
                 networkOutput.println(client.sendJOIN());
 
                 response = networkInput.nextLine();
-
-                if(response.equals("J_OK"))
+                System.out.println("SERVER> " +response);
+                //get response message protocol J_OK
+                if(response.contains("J_OK"))
                 {
                     System.out.println("connection established");
                     System.out.println("SERVER> " + response);
                     connectionEstablished = true;
-                }
+                } //get response message protocl J_ERR
                 else if(response.contains("J_ERR"))
                 {
                     System.out.println("username already exists, try another");
                     connectionEstablished = false;
                 }
                 
-            }while (!response.equals("J_OK") && !connectionEstablished);
+            }while (!response.contains("J_OK") && !connectionEstablished);
             
             do {
                 System.out.println("please enter a message");
                 message = userEntry.nextLine();
+                //response = "";
                 networkOutput.println(message);
                 
                 System.out.println("SERVER> " + response);

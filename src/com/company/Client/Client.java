@@ -90,14 +90,11 @@ public class Client{
 
     public void startClient()
     {
-        ClientReceive clientReceive = new ClientReceive();
         ClientSend clientSend = new ClientSend();
 
-        Thread t1 = new Thread(clientReceive);
-        Thread t2 = new Thread(clientSend);
+        Thread t1 = new Thread(clientSend);
 
         t1.start();
-        t2.start();
     }
 
 }

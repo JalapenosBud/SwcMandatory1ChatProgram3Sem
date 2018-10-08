@@ -27,6 +27,7 @@ public class ClientReceive implements Runnable {
         Socket socket = null;
         try
         {
+            System.out.println("ClientRecieve waits for response from server");
             socket = new Socket(host,PORT);
             String response = "";
             Scanner networkInput = new Scanner(socket.getInputStream());
@@ -38,7 +39,7 @@ public class ClientReceive implements Runnable {
                 {
                     System.out.println("user name already exists");
                 }
-                else
+                else if(response.contains("J_OK"))
                 {
                     System.out.println("\nSERVER> " + response);
                 }
