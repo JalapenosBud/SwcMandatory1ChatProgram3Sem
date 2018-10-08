@@ -1,5 +1,7 @@
 package com.company.Client;
 
+import com.company.Utilities.ColorCoder;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetAddress;
@@ -18,7 +20,7 @@ public class ClientSend implements Runnable {
     Client client;
 
     @Override
-    public void run() {
+    public synchronized void run() {
 
         try
         {
@@ -39,56 +41,48 @@ public class ClientSend implements Runnable {
             PrintWriter networkOutput = new PrintWriter(socket.getOutputStream(),true);
             Scanner networkInput = new Scanner(socket.getInputStream());
 
-
+            //for console write for user
             Scanner userEntry = new Scanner(System.in);
+
+            //this is the response client gets from the server
+            String response = "";
 
             //this is the message the client sends
             String message = "";
 
-            //this is the response client gets from the server
-            String response = "";
-            do
+            while(true)
             {
-                //read respond message from server
-
-
-
-                //Først send user name med join protocol
-                //På server vent som den første besked kun på dem med join protocol, ellers return
-                System.out.println("please enter your username:");
-                String name = userEntry.nextLine();
-
-                //create temp client
-                client = new Client(name,STRIPTHEFUCKINGSLASHOFFMYIPADDRESS(socket),socket.getPort());
-
-                //sent join msg with new compiled client
-                networkOutput.println(client.sendJOIN());
-
-                response = networkInput.nextLine();
-                System.out.println("SERVER> " + response);
-                //get response message protocol J_OK
-                if(response.contains("J_OK"))
+                //first send join msg to server
+                //if server sends j-ok back then go into another if statement
+                if(!connectionEstablished)
                 {
-                    System.out.println("connection established");
-                    System.out.println("SERVER> " + response);
-                    connectionEstablished = true;
-                } //get response message protocl J_ERR
-                else if(response.contains("J_ERR"))
-                {
-                    System.out.println("username already exists, try another");
-                    connectionEstablished = false;
+                    System.out.println("please enter your username:");
+                    String name = userEntry.nextLine();
+                    client = new Client(name,STRIPTHEFUCKINGSLASHOFFMYIPADDRESS(socket),socket.getPort());
+
+                    //sent join msg with new compiled client
+                    networkOutput.println(client.sendJOIN());
+
+                    response = networkInput.nextLine();
+
+                    if(response.contains("J_OK"))
+                    {
+                        System.out.println("Server accepted connection.");
+                        connectionEstablished = true;
+                    }
+                    //get response message protocol J_ERR
+                    else if(response.contains("J_ERR"))
+                    {
+                        System.out.println("username already exists, try another");
+                        connectionEstablished = false;
+                    }
                 }
-                
-            }while (!response.contains("J_OK") && !connectionEstablished);
-            
-            do {
-                System.out.println("please enter a message");
-                message = userEntry.nextLine();
-                //response = "";
-                networkOutput.println(message);
-                
-                System.out.println("SERVER> " + response);
-            }while(connectionEstablished && !message.equals("***QUIT***"));
+                if(connectionEstablished)
+                {
+                    System.out.print(ColorCoder.ANSI_CYAN + "> ");
+                    message = userEntry.nextLine();
+                }
+            }
         }
         catch(IOException ioEx)
         {
