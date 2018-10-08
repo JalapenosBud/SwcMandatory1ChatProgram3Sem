@@ -65,7 +65,7 @@ public class ClientSend implements Runnable {
                 networkOutput.println(client.sendJOIN());
 
                 response = networkInput.nextLine();
-                System.out.println("SERVER> " +response);
+                System.out.println("SERVER> " + response);
                 //get response message protocol J_OK
                 if(response.contains("J_OK"))
                 {
