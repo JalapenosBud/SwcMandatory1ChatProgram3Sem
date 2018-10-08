@@ -101,8 +101,6 @@ public class ThreadHandler extends Thread{
             received = input.nextLine();
             
             System.out.println("message received: " + received);
-
-            output.println("ECHO: " + received);
             
         } while (!received.equals("QUIT") && hasClientConnected);
         //----------when client has connected--------
