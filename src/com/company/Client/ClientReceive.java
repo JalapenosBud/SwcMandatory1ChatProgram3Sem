@@ -12,7 +12,7 @@ public class ClientReceive implements Runnable {
     private static final int PORT = 1234;
 
     @Override
-    public synchronized void run() {
+    public void run() {
 
         try
         {
@@ -28,13 +28,21 @@ public class ClientReceive implements Runnable {
         try
         {
             socket = new Socket(host,PORT);
-            String response = null;
+            String response = "";
             Scanner networkInput = new Scanner(socket.getInputStream());
 
             do{
                 response = networkInput.nextLine();
 
-                System.out.println("\nSERVER> " + response);
+                if(response.contains("J_ERR"))
+                {
+                    System.out.println("user name already exists");
+                }
+                else
+                {
+                    System.out.println("\nSERVER> " + response);
+                }
+
             }while(!response.equals("QUIT"));
 
         }

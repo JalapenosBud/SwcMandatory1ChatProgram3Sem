@@ -18,7 +18,7 @@ public class ClientSend implements Runnable {
     Client client;
 
     @Override
-    public synchronized void  run() {
+    public void  run() {
 
         try
         {
@@ -57,8 +57,14 @@ public class ClientSend implements Runnable {
 
                 if(response.equals("J_OK"))
                 {
+                    System.out.println("connection established");
                     System.out.println("SERVER> " + response);
                     connectionEstablished = true;
+                }
+                else if(response.contains("J_ERR"))
+                {
+                    System.out.println("username already exists, try another");
+                    connectionEstablished = false;
                 }
                 
             }while (!response.equals("J_OK") && !connectionEstablished);
