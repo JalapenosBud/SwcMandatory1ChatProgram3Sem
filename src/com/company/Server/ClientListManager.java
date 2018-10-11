@@ -11,7 +11,7 @@ public class ClientListManager {
 
     public List<Client> clients = new ArrayList<>();
 
-    public static ClientListManager getInstance()
+    public synchronized static ClientListManager getInstance()
     {
         if(instance == null)
         {

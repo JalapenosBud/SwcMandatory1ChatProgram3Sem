@@ -65,13 +65,32 @@ public class ThreadHandler extends Thread{
                 {
                     case "JOIN":
                     {
+                        if(ClientListManager.getInstance().clients.size() == 0)
+                        {
+                            System.out.println("size is in == 0" + ClientListManager.getInstance().clients.size());
+                            Client tmpClient = null;
+                            try {
+                                tmpClient = returnNewClient(received);
+                                ClientListManager.getInstance().clients.add(tmpClient);
+
+                                System.out.println(tmpClient.getName() + " was added");
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            output.println("J_OK");
+                            hasClientConnected = true;
+
+                        }
                         //if there already are people on the server
-                        if(ClientListManager.getInstance().clients.size() > 0)
+                        else if(ClientListManager.getInstance().clients.size() > 0)
                         {
                             //loop through
                             for(int i = 0; i < ClientListManager.getInstance().clients.size(); i++)
                             {
-                                System.out.println("looping over: #" + ClientListManager.getInstance().clients.get(i) + " client.");
+                                System.out.println("looping over: #" + i + ", "+ClientListManager.getInstance().clients.get(i) + " client.");
+                                System.out.println("size is " + ClientListManager.getInstance().clients.size() + " in > 0");
+                                System.out.println("current incoming client name is: " + tmpInfo[1]);
                                 //get name of clients and check if exists
                                 //if user name exists
                                 //TODO: check j err in before connection accepted in client
@@ -95,33 +114,23 @@ public class ThreadHandler extends Thread{
                                 }
                                 else
                                 {
+                                    output.println("J_ERR");
                                     //set to false and start loop over?
                                     System.out.println(tmpInfo[1] + " already exists on server");
                                     hasClientConnected = false;
                                 }
                             }
                         }
-                        else if(ClientListManager.getInstance().clients.size() == 0)
-                        {
-                            Client tmpClient = null;
-                            try {
-                                tmpClient = returnNewClient(received);
-                                ClientListManager.getInstance().clients.add(tmpClient);
 
-                                System.out.println(tmpClient.getName() + " was added");
-                                hasClientConnected = true;
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
+                        //TODO: SKAL DET HER VÆRE HERINDE ELLER UDEN FOR JOIN CASE?????
                         //output.println("J_OK you have joined");
                         if(hasClientConnected)
                         {
-                            output.println("J_OK");
+
                         }
                         else
                         {
-                            output.println("J_ERR");
+
                         }
 
                     }
