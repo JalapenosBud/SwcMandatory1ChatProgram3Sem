@@ -65,13 +65,13 @@ public class ClientSend implements Runnable {
 
                     response = networkInput.nextLine();
 
-                    if(response.contains("J_OK"))
+                    if(response.contains("J_OK") && !connectionEstablished)
                     {
                         System.out.println("Server accepted connection.");
                         connectionEstablished = true;
                     }
                     //get response message protocol J_ERR
-                    else if(response.contains("J_ERR"))
+                    if(response.contains("J_ERR") && !connectionEstablished)
                     {
                         System.out.println("username already exists, try another");
                         connectionEstablished = false;
