@@ -65,36 +65,40 @@ public class ThreadHandler extends Thread{
                 {
                     case "JOIN":
                     {
-                        if(ClientListManager.getInstance().clients.size() == 0)
+                        if(ClientListManager.getInstance().getSize() == 0)
                         {
-                            System.out.println("size is in == 0" + ClientListManager.getInstance().clients.size());
+
+                            System.out.println("size is in == 0" + ClientListManager.getInstance().getSize());
                             Client tmpClient = null;
                             try {
                                 tmpClient = returnNewClient(received);
-                                ClientListManager.getInstance().clients.add(tmpClient);
-
-                                System.out.println(tmpClient.getName() + " was added");
 
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
+
+
+                            ClientListManager.getInstance().addToList(tmpClient);
+
+                            System.out.println(tmpClient.getName() + " was added");
                             output.println("J_OK");
                             hasClientConnected = true;
 
                         }
                         //if there already are people on the server
-                        else if(ClientListManager.getInstance().clients.size() > 0)
+                        else if(ClientListManager.getInstance().getSize() > 0)
                         {
                             //loop through
-                            for(int i = 0; i < ClientListManager.getInstance().clients.size(); i++)
+                            for(int i = 0; i < ClientListManager.getInstance().getSize(); i++)
                             {
-                                System.out.println("looping over: #" + i + ", "+ClientListManager.getInstance().clients.get(i) + " client.");
-                                System.out.println("size is " + ClientListManager.getInstance().clients.size() + " in > 0");
+                                System.out.println("looping over: #" + i + ", "+ClientListManager.getInstance().getClient(i) + " client.");
+                                System.out.println("size is " + ClientListManager.getInstance().getSize() + " in > 0");
                                 System.out.println("current incoming client name is: " + tmpInfo[1]);
+
                                 //get name of clients and check if exists
                                 //if user name exists
                                 //TODO: check j err in before connection accepted in client
-                                if(!ClientListManager.getInstance().clients.get(i).getName().equals(tmpInfo[1]))
+                                if(!ClientListManager.getInstance().getClient(i).getName().equals(tmpInfo[1]))
                                 {
 
                                     //create temporary client
@@ -106,7 +110,7 @@ public class ThreadHandler extends Thread{
                                     }
 
                                     //addto list
-                                    ClientListManager.getInstance().clients.add(tmpClient);
+                                    ClientListManager.getInstance().addToList(tmpClient);
 
                                     System.out.println(tmpClient.getName() + " was added to the server");
                                     //set boolean to true cause now we want to withhold a connection
@@ -124,7 +128,7 @@ public class ThreadHandler extends Thread{
 
                         //TODO: SKAL DET HER VÆRE HERINDE ELLER UDEN FOR JOIN CASE?????
                         //output.println("J_OK you have joined");
-                        if(hasClientConnected)
+                        /*if(hasClientConnected)
                         {
 
                         }
@@ -132,7 +136,7 @@ public class ThreadHandler extends Thread{
                         {
 
                         }
-
+                        */
                     }
                 }
             }

@@ -9,7 +9,7 @@ public class ClientListManager {
 
     private static ClientListManager instance = null;
 
-    public List<Client> clients = new ArrayList<>();
+    private List<Client> clients = new ArrayList<>();
 
     public synchronized static ClientListManager getInstance()
     {
@@ -20,5 +20,19 @@ public class ClientListManager {
         return instance;
     }
 
+    public synchronized void addToList(Client client)
+    {
+        clients.add(client);
+    }
+
+    public synchronized int getSize()
+    {
+        return clients.size();
+    }
+
+    public synchronized Client getClient(int i)
+    {
+        return clients.get(i);
+    }
 
 }
