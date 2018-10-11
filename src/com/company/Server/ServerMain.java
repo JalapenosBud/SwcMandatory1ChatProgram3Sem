@@ -13,7 +13,7 @@ public class ServerMain {
     static ServerSocket serverSocket;
     private static final int port = 1234;
 
-    public static List<Client> clients = new ArrayList<>();
+    //public  static List<Client> clients = new ArrayList<>();
 
     public static void main(String[] args) {
 
@@ -40,16 +40,16 @@ public class ServerMain {
                 smid liste ned
                 tag sidste addede socket og tilføj i liste
                  */
-
+                //System.out.println("ny connection " + mySocket);
+                ThreadHandler handler = new ThreadHandler(mySocket);
+                handler.start();
             }
             catch (IOException e)
             {
                 System.out.println("couldnt connect");
                 System.exit(1);
             }
-            //System.out.println("ny connection " + mySocket);
-            ThreadHandler handler = new ThreadHandler(mySocket,clients);
-            handler.start();
+
 
         }while(true);
     }

@@ -23,21 +23,19 @@ import static com.company.Utilities.StringUtilities.splitOnCrocs;
 public class ThreadHandler extends Thread{
 
     String[] clientInfo = new String[3];
-    List<Client> clients = new ArrayList<>();
+    //List<Client> clients = new ArrayList<>();
 
     private PrintWriter output;
 
     private Socket client;
     private Scanner input;
 
-    private Client thisClient;
-
     boolean programAlive = true;
 
-    public ThreadHandler(Socket socket, List<Client> clients) {
+    public ThreadHandler(Socket socket) {
         //Set up reference to associated socket…
         client = socket;
-        this.clients = clients;
+        //this.clients = clients;
         try {
             input = new Scanner(client.getInputStream());
             output = new PrintWriter(client.getOutputStream(), true);
@@ -46,7 +44,7 @@ public class ThreadHandler extends Thread{
         }
     }
 
-    public synchronized void run ()
+    public void run ()
     {
         boolean hasClientConnected = false;
         String received;
@@ -60,6 +58,7 @@ public class ThreadHandler extends Thread{
             {
                 //client msg
                 received = input.nextLine();
+
                 String[] tmpInfo = splitOnCrocs(received);
 
                 switch (tmpInfo[0])
@@ -67,106 +66,74 @@ public class ThreadHandler extends Thread{
                     case "JOIN":
                     {
                         //if there already are people on the server
-                        if(clients.size() > 0)
+                        if(ClientListManager.getInstance().clients.size() > 0)
                         {
                             //loop through
-                            for(int i = 0; i < clients.size(); i++)
+                            for(int i = 0; i < ClientListManager.getInstance().clients.size(); i++)
                             {
+                                System.out.println("looping over: #" + ClientListManager.getInstance().clients.get(i) + " client.");
                                 //get name of clients and check if exists
-                                if(clients.get(i).getName().equals(tmpInfo[1]))
+                                //if user name exists
+                                //TODO: check j err in before connection accepted in client
+                                if(!ClientListManager.getInstance().clients.get(i).getName().equals(tmpInfo[1]))
                                 {
-                                    output.println("J_ERR" + " sorry, " + tmpInfo[1] + " already exists, try again");
-                                    hasClientConnected = false;
-                                }
-                                else
-                                {
+
+                                    //create temporary client
                                     Client tmpClient = null;
                                     try {
                                         tmpClient = returnNewClient(received);
-                                        thisClient = tmpClient;
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }
 
-                                    clients.add(thisClient);
-                                    output.println("J_OK");
+                                    //addto list
+                                    ClientListManager.getInstance().clients.add(tmpClient);
 
                                     System.out.println(tmpClient.getName() + " was added to the server");
+                                    //set boolean to true cause now we want to withhold a connection
                                     hasClientConnected = true;
+                                }
+                                else
+                                {
+                                    //set to false and start loop over?
+                                    System.out.println(tmpInfo[1] + " already exists on server");
+                                    hasClientConnected = false;
                                 }
                             }
                         }
-                        else if(clients.size() == 0)
+                        else if(ClientListManager.getInstance().clients.size() == 0)
                         {
                             Client tmpClient = null;
                             try {
                                 tmpClient = returnNewClient(received);
-                                thisClient = tmpClient;
+                                ClientListManager.getInstance().clients.add(tmpClient);
+
+                                System.out.println(tmpClient.getName() + " was added");
+                                hasClientConnected = true;
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-
-                            clients.add(thisClient);
-                            output.println("J_OK " + " user " + thisClient.getName() + " has been added.");
                         }
                         //output.println("J_OK you have joined");
-                        hasClientConnected = true;
+                        if(hasClientConnected)
+                        {
+                            output.println("J_OK");
+                        }
+                        else
+                        {
+                            output.println("J_ERR");
+                        }
+
                     }
                 }
             }
             if(hasClientConnected)
             {
                 received = input.nextLine();
-                System.out.println(thisClient.getName() + " has joined.");
+                System.out.print(">" + received);
 
             }
         }
-
-
-/*
-try {
-
-                //if msg = join and list is not 0
-                if(received.contains("JOIN") && clients.size() > 0)
-                {
-                    System.out.println(clients.size() + " exists on server");
-                    for(int i = 0; i < clients.size(); i++)
-                    {
-                        if(clients.get(i).getName().equals(tmpClient.getName()))
-                        {
-                            output.println("J_ERR" + " sorry, " + tmpClient.getName() + " already exists, try again");
-                            hasClientConnected = false;
-                        }
-                        else
-                        {
-
-                            output.println("J_OK");
-                            clients.add(tmpClient);
-                            System.out.println(tmpClient.getName() + " was added to the server");
-                            hasClientConnected = true;
-                        }
-                    }
-                }
-                else if(received.contains("JOIN") && clients.size() == 0)
-                {
-                    //send msg back
-                    output.println("J_OK");
-                    //add client
-                    System.out.println("server is empty");
-                    clients.add(tmpClient);
-
-                    System.out.println(tmpClient.getName() + " was added to the server");
-                    hasClientConnected = true;
-                }
-
-                if(hasClientConnected)
-                {
-                    output.println("You are now connected");
-                    //received =
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }*/
 
         try {
             if (client != null) {
