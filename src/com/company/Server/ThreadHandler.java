@@ -47,106 +47,105 @@ public class ThreadHandler extends Thread{
     public void run ()
     {
         boolean hasClientConnected = false;
-        String received;
+        String received = "";
 
         //------incoming connection---------
         System.out.println("waiting for client to connect");
 
-        while(programAlive)
-        {
-            if(!hasClientConnected)
-            {
+
+
                 //client msg
                 received = input.nextLine();
 
                 String[] tmpInfo = splitOnCrocs(received);
+                System.out.println("name is : " + tmpInfo[1] + " before checking JOIN message");
 
-                switch (tmpInfo[0])
+                while(!hasClientConnected)
                 {
-                    case "JOIN":
+                    switch (tmpInfo[0])
                     {
-                        if(ClientListManager.getInstance().getSize() == 0)
+                        case "JOIN":
                         {
-
-                            System.out.println("size is in == 0" + ClientListManager.getInstance().getSize());
-                            Client tmpClient = null;
-                            try {
-                                tmpClient = returnNewClient(received);
-
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-
-
-                            ClientListManager.getInstance().addToList(tmpClient);
-
-                            System.out.println(tmpClient.getName() + " was added");
-                            output.println("J_OK");
-                            hasClientConnected = true;
-
-                        }
-                        //if there already are people on the server
-                        else if(ClientListManager.getInstance().getSize() > 0)
-                        {
-                            //loop through
-                            for(int i = 0; i < ClientListManager.getInstance().getSize(); i++)
+                            if(ClientListManager.getInstance().getSize() == 0)
                             {
-                                System.out.println("looping over: #" + i + ", "+ClientListManager.getInstance().getClient(i) + " client.");
-                                System.out.println("size is " + ClientListManager.getInstance().getSize() + " in > 0");
-                                System.out.println("current incoming client name is: " + tmpInfo[1]);
 
-                                //get name of clients and check if exists
-                                //if user name exists
-                                //TODO: check j err in before connection accepted in client
-                                if(!ClientListManager.getInstance().getClient(i).getName().equals(tmpInfo[1]))
-                                {
+                                System.out.println("size is in == 0" + ClientListManager.getInstance().getSize());
+                                Client tmpClient = null;
+                                try {
+                                    tmpClient = returnNewClient(received);
 
-                                    //create temporary client
-                                    Client tmpClient = null;
-                                    try {
-                                        tmpClient = returnNewClient(received);
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-
-                                    //addto list
-                                    ClientListManager.getInstance().addToList(tmpClient);
-
-                                    System.out.println(tmpClient.getName() + " was added to the server");
-                                    //set boolean to true cause now we want to withhold a connection
-                                    hasClientConnected = true;
+                                } catch (IOException e) {
+                                    e.printStackTrace();
                                 }
-                                else
+
+
+                                ClientListManager.getInstance().addToList(tmpClient);
+
+                                System.out.println(tmpClient.getName() + " was added");
+                                output.println("J_OK");
+                                hasClientConnected = true;
+                                break;
+
+                            }
+                            //if there already are people on the server
+                            else if(ClientListManager.getInstance().getSize() > 0)
+                            {
+                                //loop through
+                                for(int i = 0; i < ClientListManager.getInstance().getSize(); i++)
                                 {
-                                    output.println("J_ERR");
-                                    //set to false and start loop over?
-                                    System.out.println(tmpInfo[1] + " already exists on server");
-                                    hasClientConnected = false;
+                                    System.out.println("looping over: #" + i + ", "+ClientListManager.getInstance().getClient(i) + " client.");
+                                    System.out.println("size is " + ClientListManager.getInstance().getSize() + " in > 0");
+                                    System.out.println("current incoming client name is: " + tmpInfo[1]);
+
+                                    //get name of clients and check if exists
+                                    //if user name exists
+                                    //TODO: client index i new client is assigned before tmpInfo[1] is checked??
+                                    if(tmpInfo[1].equals(ClientListManager.getInstance().getClient(i).getName()))
+                                    {
+
+                                        output.println("J_ERR");
+                                        //set to false and start loop over?
+                                        System.out.println(tmpInfo[1] + " already exists on server");
+                                        hasClientConnected = false;
+
+                                    }
+                                    else
+                                    {
+                                        //create temporary client
+                                        Client tmpClient = null;
+                                        try {
+                                            tmpClient = returnNewClient(received);
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+
+                                        //addto list
+                                        ClientListManager.getInstance().addToList(tmpClient);
+
+                                        System.out.println(tmpClient.getName() + " was added to the server");
+                                        //set boolean to true cause now we want to withhold a connection
+                                        output.println("J_OK");
+                                        hasClientConnected = true;
+                                        break;
+                                    }
                                 }
                             }
                         }
-
-                        //TODO: SKAL DET HER VÆRE HERINDE ELLER UDEN FOR JOIN CASE?????
-                        //output.println("J_OK you have joined");
-                        /*if(hasClientConnected)
-                        {
-
-                        }
-                        else
-                        {
-
-                        }
-                        */
                     }
+
                 }
-            }
+
+
             if(hasClientConnected)
             {
-                received = input.nextLine();
-                System.out.print(">" + received);
-
+                while(!received.equals("**QUIT**"))
+                {
+                    received ="";
+                    received = input.nextLine();
+                    System.out.print(received);
+                }
             }
-        }
+
 
         try {
             if (client != null) {
