@@ -54,7 +54,7 @@ public class ClientSend implements Runnable {
             {
                 //first send join msg to server
                 //if server sends j-ok back then go into another if statement
-                if(!connectionEstablished)
+                if(!connectionEstablished || (!connectionEstablished && response.contains("J_ERR")))
                 {
                     System.out.println("please enter your username:");
                     String name = userEntry.nextLine();
@@ -77,9 +77,12 @@ public class ClientSend implements Runnable {
                         connectionEstablished = false;
                     }
                 }
-                if(connectionEstablished)
+                if(connectionEstablished && message.contains("J_OK"))
                 {
-                    System.out.print(ColorCoder.ANSI_CYAN + "> ");
+                    //TODO: LAV en command class der har J_OK, J_ERR, DATA, IMAV
+                    //TODO: formater streng der bliver sendt afsted til at ændre= JOIN TIL DATA
+                    //TODO: og i threadhandler; læs [0] og hvis DATA er sendt, så læs beskeden
+                    //System.out.print(ColorCoder.ANSI_CYAN + "> ");
                     message = userEntry.nextLine();
                 }
             }
