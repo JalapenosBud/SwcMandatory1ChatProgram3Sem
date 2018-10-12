@@ -33,15 +33,7 @@ public class ServerMain {
             try{
                 //System.out.println("\u001B[33mHello");
                 mySocket = serverSocket.accept();
-                /*
-                ha et set eller liste der adder ny client
-                gem denne socket i en liste
-                brug socket liste i parameter
-                smid liste ned
-                tag sidste addede socket og tilføj i liste
-                 */
-                //System.out.println("ny connection " + mySocket);
-                ThreadHandler handler = new ThreadHandler(mySocket);
+                ClientHandler handler = new ClientHandler(mySocket);
                 handler.start();
             }
             catch (IOException e)

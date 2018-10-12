@@ -89,4 +89,17 @@ public class StringUtilities {
         return  tempArray;
     }
 
+    /**
+     * this method gets data protocol and outputs message user writes
+     * @param input
+     * @return
+     */
+    public static String inputDataOutputMessage(String input)
+    {
+        String[] tmpArr = splitDataProtocol(input);
+        //TODO: split incoming data up and use message element only
+        //TODO: is done?
+        return tmpArr[2];
+    }
+
 }

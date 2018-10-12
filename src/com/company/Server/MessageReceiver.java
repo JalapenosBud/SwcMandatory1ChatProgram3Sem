@@ -111,6 +111,14 @@ public class MessageReceiver extends Thread {
             }
             hasClientConnected = true;
 
+            try {
+                if (client != null) {
+                    System.out.println("Closing down connection…");
+                    client.close();
+                }
+            } catch (IOException ioEx) {
+                System.out.println("Unable to disconnect!");
+            }
         }
     }
 }

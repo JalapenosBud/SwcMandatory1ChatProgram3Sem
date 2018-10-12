@@ -35,6 +35,7 @@ public class MessageSender extends Thread{
         {
             System.out.println("waiting for message...");
 
+            //TODO:
             String received1 = input.nextLine();
             //the whole message we receive
             System.out.print(received1);

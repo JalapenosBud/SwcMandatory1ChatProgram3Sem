@@ -2,14 +2,14 @@ package com.company.Utilities;
 
 public class Commands {
 
-    public static String sendJOIN()
+    public static String send_JOIN()
     {
         return "";
     }
 
-    public static String sendDATA()
+    public static String send_DATA(String clientName, String message)
     {
-        return "";
+        return "DATA <<" + clientName + ">>:" + "<<" + message + ">>";
     }
 
     public static String sendJ_OK()
