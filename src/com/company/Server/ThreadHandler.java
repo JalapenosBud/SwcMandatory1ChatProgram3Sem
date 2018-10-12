@@ -15,144 +15,22 @@ import static com.company.Utilities.StringUtilities.splitJoinProtocol;
 
 public class ThreadHandler extends Thread{
 
-    String[] clientInfo = new String[3];
-    //List<Client> clients = new ArrayList<>();
-
-    private PrintWriter output;
-
     private Socket client;
-    private Scanner input;
 
-    boolean programAlive = true;
 
     public ThreadHandler(Socket socket) {
         //Set up reference to associated socket…
         client = socket;
-        //this.clients = clients;
-        try {
-            input = new Scanner(client.getInputStream());
-            output = new PrintWriter(client.getOutputStream(), true);
-        } catch (IOException ioEx) {
-            ioEx.printStackTrace();
-        }
     }
 
+
+    //TODO: omg misunderstood this shit. this is the server, it will reset execution over and over
     public void run ()
     {
-        boolean hasClientConnected = false;
-        String received = "";
-        boolean waitForJoinMsg = true;
         //------incoming connection---------
 
 
-        while(!hasClientConnected)
-        {
-            System.out.println("waiting for client to connect");
-            //client msg
-            received = input.nextLine();
-
-            String[] tmpInfo = splitJoinProtocol(received);
-            System.out.println("name is : " + tmpInfo[1] + " before checking JOIN message");
-
-            switch (tmpInfo[0])
-            {
-                case "JOIN":
-                {
-                    if(ClientListManager.getInstance().getSize() == 0)
-                    {
-
-                        System.out.println("size is in == 0" + ClientListManager.getInstance().getSize());
-                        Client tmpClient = null;
-                        try {
-                            tmpClient = returnNewClient(received);
-
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
-
-                        ClientListManager.getInstance().addToList(tmpClient);
-
-                        hasClientConnected = true;
-
-                        System.out.println(tmpClient.getName() + " was added");
-                        output.println("J_OK");
-
-                        System.out.println("J_OK sent");
-                        break;
-
-                    }
-                    //if there already are people on the server
-                    else if(ClientListManager.getInstance().getSize() > 0)
-                    {
-                        //loop through
-                        for(int i = 0; i < ClientListManager.getInstance().getSize(); i++)
-                        {
-                            System.out.println("looping over: #" + i + ", "+ClientListManager.getInstance().getClient(i) + " client.");
-                            System.out.println("size is " + ClientListManager.getInstance().getSize() + " in > 0");
-                            System.out.println("current incoming client name is: " + tmpInfo[1]);
-
-                            //get name of clients and check if exists
-                            //if user name exists
-                            //TODO: client index i new client is assigned before tmpInfo[1] is checked??
-                            if(tmpInfo[1].equals(ClientListManager.getInstance().getClient(i).getName()))
-                            {
-
-                                output.println("J_ERR");
-                                //set to false and start loop over?
-                                System.out.println(tmpInfo[1] + " already exists on server");
-
-                            }
-                            else
-                            {
-                                //create temporary client
-                                Client tmpClient = null;
-                                try {
-                                    tmpClient = returnNewClient(received);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-
-                                //addto list
-                                ClientListManager.getInstance().addToList(tmpClient);
-                                hasClientConnected = true;
-                                System.out.println(tmpClient.getName() + " was added to the server");
-                                //set boolean to true cause now we want to withhold a connection
-                                break;
-                            }
-                        }
-                    }
-
-                }
-            }
-
-        }
-
-
-        if(hasClientConnected)
-        {
-            System.out.println("waiting for message...");
-
-            received = input.nextLine();
-            //the whole message we receive
-            System.out.print(received);
-
-            while(!received.equals("**QUIT**"))
-            {
-                String[] tmpInfo = StringUtilities.splitDataProtocol(received);
-                //TODO: this will never execute cause tmpinfo isnt updated since the client has joined
-                //TODO: it needs to read and break up the new message
-                switch (tmpInfo[0])
-                {
-                    case "DATA":
-                        //TODO: print out to all other uses
-                        output.println(inputDataOutputMessage(received));
-                       // break;
-                }
-
-
-            }
-        }
+        //TODO: warning here cause bool doesn't get flipped.
 
 
         try {
@@ -166,31 +44,9 @@ public class ThreadHandler extends Thread{
     }
     //----------when client has connected--------
 
-    /**
-     * this method gets data protocol and outputs message user writes
-     * @param input
-     * @return
-     */
-    public String inputDataOutputMessage(String input)
-    {
-        String[] tmpArr = splitDataProtocol(input);
-        //TODO: split incoming data up and use message element only
-        //TODO: is done?
-        return tmpArr[2];
-    }
 
-    public Client returnNewClient(String stringFromClient) throws IOException {
-        /**
-         * 0, = JOIN MSG
-         * 1, = USERNAME
-         * 2, = IP ADDRESS
-         * 3, = PORT
-         */
-        String[] tmpArr = splitJoinProtocol(stringFromClient);
-        //pass in ip address
-        Socket tmpSocket = new Socket(tmpArr[2],1234);
-        return new Client(tmpArr[1], STRIPTHEFUCKINGSLASHOFFMYIPADDRESS(tmpSocket),Integer.parseInt(tmpArr[3]));
-    }
+
+
 
 
 
