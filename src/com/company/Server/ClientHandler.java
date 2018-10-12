@@ -13,10 +13,10 @@ public class ClientHandler extends Thread {
 
     @Override
     public void run() {
-        MessageReceiver receiver = new MessageReceiver(client);
+        //MessageReceiver receiver = new MessageReceiver(client);
         MessageSender sender = new MessageSender(client);
 
-        receiver.start();
+        //receiver.start();
         sender.start();
     }
 }

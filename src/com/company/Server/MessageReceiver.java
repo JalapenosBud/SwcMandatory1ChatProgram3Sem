@@ -26,7 +26,7 @@ public class MessageReceiver extends Thread {
     }
 
     @Override
-    public synchronized void run() {
+    public void run() {
 
         try {
             input = new Scanner(client.getInputStream());
@@ -112,7 +112,7 @@ public class MessageReceiver extends Thread {
             hasClientConnected = true;
 
             try {
-                if (client != null) {
+                if (client == null) {
                     System.out.println("Closing down connection…");
                     client.close();
                 }

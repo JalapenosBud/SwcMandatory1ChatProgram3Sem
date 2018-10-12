@@ -16,13 +16,18 @@ public class MessageSender extends Thread{
 
     Socket client;
 
+    MessageReceiver receiver;
+    
     public MessageSender(Socket client)
     {
         this.client = client;
+        receiver = new MessageReceiver(client);
+        
+        receiver.start();
     }
 
     @Override
-    public synchronized void run() {
+    public void run() {
 
         try {
             input = new Scanner(client.getInputStream());
@@ -31,7 +36,7 @@ public class MessageSender extends Thread{
             ioEx.printStackTrace();
         }
 
-        while(true)
+        while(receiver.hasClientConnected)
         {
             System.out.println("waiting for message...");
 
