@@ -2,22 +2,13 @@ package com.company.Server;
 
 import com.company.Client.Client;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
-import java.util.regex.Pattern;
 
 import static com.company.Utilities.StringUtilities.STRIPTHEFUCKINGSLASHOFFMYIPADDRESS;
-import static com.company.Utilities.StringUtilities.splitOnCrocs;
+import static com.company.Utilities.StringUtilities.splitJoinProtocol;
 
 
 public class ThreadHandler extends Thread{
@@ -57,7 +48,7 @@ public class ThreadHandler extends Thread{
                 //client msg
                 received = input.nextLine();
 
-                String[] tmpInfo = splitOnCrocs(received);
+                String[] tmpInfo = splitJoinProtocol(received);
                 System.out.println("name is : " + tmpInfo[1] + " before checking JOIN message");
 
                 while(!hasClientConnected)
@@ -140,7 +131,14 @@ public class ThreadHandler extends Thread{
             {
                 while(!received.equals("**QUIT**"))
                 {
-                    received ="";
+                    switch (tmpInfo[0])
+                    {
+                        case "DATA":
+                            //TODO: print out to all other uses
+                            output.println();
+                            break;
+                    }
+
                     received = input.nextLine();
                     System.out.print(received);
                 }
@@ -158,6 +156,14 @@ public class ThreadHandler extends Thread{
     }
     //----------when client has connected--------
 
+    public String returnDATAString(String input)
+    {
+        String[] tmpArr = splitJoinProtocol(input);
+
+        //TODO: split incoming data up and use message element only
+        return "";
+    }
+
     public Client returnNewClient(String stringFromClient) throws IOException {
         /**
          * 0, = JOIN MSG
@@ -165,7 +171,7 @@ public class ThreadHandler extends Thread{
          * 2, = IP ADDRESS
          * 3, = PORT
          */
-        String[] tmpArr = splitOnCrocs(stringFromClient);
+        String[] tmpArr = splitJoinProtocol(stringFromClient);
         //pass in ip address
         Socket tmpSocket = new Socket(tmpArr[2],1234);
         return new Client(tmpArr[1], STRIPTHEFUCKINGSLASHOFFMYIPADDRESS(tmpSocket),Integer.parseInt(tmpArr[3]));
