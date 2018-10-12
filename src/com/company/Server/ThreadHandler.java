@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.util.Scanner;
 
 import static com.company.Utilities.StringUtilities.STRIPTHEFUCKINGSLASHOFFMYIPADDRESS;
+import static com.company.Utilities.StringUtilities.splitDataProtocol;
 import static com.company.Utilities.StringUtilities.splitJoinProtocol;
 
 
@@ -72,9 +73,12 @@ public class ThreadHandler extends Thread{
 
                                 ClientListManager.getInstance().addToList(tmpClient);
 
+                                hasClientConnected = true;
+
                                 System.out.println(tmpClient.getName() + " was added");
                                 output.println("J_OK");
-                                hasClientConnected = true;
+
+                                System.out.println("J_OK sent");
                                 break;
 
                             }
@@ -97,7 +101,6 @@ public class ThreadHandler extends Thread{
                                         output.println("J_ERR");
                                         //set to false and start loop over?
                                         System.out.println(tmpInfo[1] + " already exists on server");
-                                        hasClientConnected = false;
 
                                     }
                                     else
@@ -112,15 +115,14 @@ public class ThreadHandler extends Thread{
 
                                         //addto list
                                         ClientListManager.getInstance().addToList(tmpClient);
-
+                                        hasClientConnected = true;
                                         System.out.println(tmpClient.getName() + " was added to the server");
                                         //set boolean to true cause now we want to withhold a connection
-                                        output.println("J_OK");
-                                        hasClientConnected = true;
                                         break;
                                     }
                                 }
                             }
+
                         }
                     }
 
@@ -129,18 +131,22 @@ public class ThreadHandler extends Thread{
 
             if(hasClientConnected)
             {
+                System.out.println("waiting for message...");
+
+                received = input.nextLine();
+                System.out.print(received);
+
                 while(!received.equals("**QUIT**"))
                 {
                     switch (tmpInfo[0])
                     {
                         case "DATA":
                             //TODO: print out to all other uses
-                            output.println();
+                            output.println(inputDataOutputMessage(received));
                             break;
                     }
 
-                    received = input.nextLine();
-                    System.out.print(received);
+
                 }
             }
 
@@ -156,12 +162,17 @@ public class ThreadHandler extends Thread{
     }
     //----------when client has connected--------
 
-    public String returnDATAString(String input)
+    /**
+     * this method gets data protocol and outputs message user writes
+     * @param input
+     * @return
+     */
+    public String inputDataOutputMessage(String input)
     {
-        String[] tmpArr = splitJoinProtocol(input);
-
+        String[] tmpArr = splitDataProtocol(input);
         //TODO: split incoming data up and use message element only
-        return "";
+        //TODO: is done?
+        return tmpArr[2];
     }
 
     public Client returnNewClient(String stringFromClient) throws IOException {
