@@ -58,6 +58,8 @@ public class ClientSend implements Runnable {
                 {
                     System.out.println("please enter your username:");
                     String name = userEntry.nextLine();
+
+                    //TODO: nullpointer?
                     client = new Client(name,STRIPTHEFUCKINGSLASHOFFMYIPADDRESS(socket),socket.getPort());
 
                     //sent join msg with new compiled client
@@ -77,6 +79,7 @@ public class ClientSend implements Runnable {
                         connectionEstablished = false;
                     }
                 }
+                //PROTOCOL: DATA <<user_name>>: <<free text…>>
                 if(connectionEstablished && message.contains("J_OK"))
                 {
                     //TODO: LAV en command class der har J_OK, J_ERR, DATA, IMAV
@@ -84,6 +87,11 @@ public class ClientSend implements Runnable {
                     //TODO: og i threadhandler; læs [0] og hvis DATA er sendt, så læs beskeden
                     //System.out.print(ColorCoder.ANSI_CYAN + "> ");
                     message = userEntry.nextLine();
+
+                    networkOutput.println("DATA <<" + client.getName() + ">>:" + "<<" + message + ">>");
+
+
+
                 }
             }
         }
