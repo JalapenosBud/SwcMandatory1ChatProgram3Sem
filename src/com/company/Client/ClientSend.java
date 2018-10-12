@@ -87,6 +87,7 @@ public class ClientSend implements Runnable {
                     message = userEntry.nextLine();
                     networkOutput.println(Commands.send_DATA(client.getName(),message));
 
+                    //TODO: NoSuchElementException: No line found
                     if(networkInput.nextLine() != null)
                     {
                         System.out.println("SERVER>" + networkInput.nextLine());
