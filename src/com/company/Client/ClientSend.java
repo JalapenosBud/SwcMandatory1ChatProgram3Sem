@@ -80,7 +80,7 @@ public class ClientSend implements Runnable {
                 if(connectionEstablished && message.contains("J_OK"))
                 {
                     //TODO: LAV en command class der har J_OK, J_ERR, DATA, IMAV
-                    //TODO: formater streng der bliver sendt afsted til at ændre= JOIN TIL DATA
+                    //TODO: formatér streng der bliver sendt afsted til at ændre = JOIN TIL DATA
                     //TODO: og i threadhandler; læs [0] og hvis DATA er sendt, så læs beskeden
                     //System.out.print(ColorCoder.ANSI_CYAN + "> ");
                     message = userEntry.nextLine();
