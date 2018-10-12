@@ -1,6 +1,7 @@
 package com.company.Client;
 
 import com.company.Utilities.ColorCoder;
+import com.company.Utilities.Commands;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -67,29 +68,29 @@ public class ClientSend implements Runnable {
 
                     response = networkInput.nextLine();
 
-                    if(response.contains("J_OK") && !connectionEstablished)
+                    if(response.contains("J_OK"))
                     {
                         System.out.println("Server accepted connection.");
                         connectionEstablished = true;
                     }
                     //get response message protocol J_ERR
-                    if(response.contains("J_ERR") && !connectionEstablished)
+                    if(response.contains("J_ERR"))
                     {
                         System.out.println("username already exists, try another");
                         connectionEstablished = false;
                     }
                 }
                 //PROTOCOL: DATA <<user_name>>: <<free text…>>
-                if(connectionEstablished && message.contains("J_OK"))
+                if(connectionEstablished)
                 {
-                    //TODO: LAV en command class der har J_OK, J_ERR, DATA, IMAV
-                    //TODO: formatér streng der bliver sendt afsted til at ændre = JOIN TIL DATA
-                    //TODO: og i threadhandler; læs [0] og hvis DATA er sendt, så læs beskeden
-                    //System.out.print(ColorCoder.ANSI_CYAN + "> ");
+                    System.out.print(ColorCoder.ANSI_CYAN + "> ");
                     message = userEntry.nextLine();
+                    networkOutput.println(Commands.send_DATA(client.getName(),message));
 
-                    networkOutput.println("DATA <<" + client.getName() + ">>:" + "<<" + message + ">>");
-
+                    if(networkInput.nextLine() != null)
+                    {
+                        System.out.println("SERVER>" + networkInput.nextLine());
+                    }
 
 
                 }
