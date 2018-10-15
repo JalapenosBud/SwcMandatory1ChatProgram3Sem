@@ -20,28 +20,33 @@ public class MessageReceiver extends Thread {
 
     Socket client;
 
-    public MessageReceiver(Socket client)
+    public MessageReceiver(Socket client, Scanner input, PrintWriter output)
     {
         this.client = client;
+        this.input = input;
+        this.output = output;
     }
 
     @Override
     public synchronized void run() {
 
-        try {
-            input = new Scanner(client.getInputStream());
-            output = new PrintWriter(client.getOutputStream(), true);
+        do {
 
             received = input.nextLine();
             //if not JOIN msg received
-            while(!received.contains("JOIN"))
-            {
+            while (!received.contains("JOIN")) {
                 System.out.println("Waiting for client to connect...");
                 output.println("enter username...");
             }
             //go and check if join is received
             checkIfUserJoins();
-
+        }while (!received.equals("**QUIT**"));
+        try{
+            if(client != null)
+            {
+                System.out.println("Closing connection");
+                client.close();
+            }
         } catch (IOException ioEx) {
             ioEx.printStackTrace();
         }

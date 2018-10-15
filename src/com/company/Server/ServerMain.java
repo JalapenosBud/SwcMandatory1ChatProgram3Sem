@@ -41,26 +41,16 @@ public class ServerMain {
         try{
             //System.out.println("\u001B[33mHello");
             mySocket = serverSocket.accept();
-            ClientHandler handler = new ClientHandler(mySocket);
-            handler.start();
         }
         catch(IOException ioEx)
         {
             ioEx.printStackTrace();
         }
-        finally
-        {
-            try
-            {
-                System.out.println("\n* Closing connection… *");
-                mySocket.close();
-            }
-            catch(IOException ioEx)
-            {
-                System.out.println("Unable to disconnect!");
-                System.exit(1);
-            }
-        }
+        do {
+            System.out.println("\nNew client accepted.\n");
+            ClientHandler handler = new ClientHandler(mySocket);
+            handler.start();
+        }while (true);
     }
 
 }

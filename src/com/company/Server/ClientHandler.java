@@ -1,19 +1,34 @@
 package com.company.Server;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class ClientHandler extends Thread {
 
-    Socket client;
+private Socket socket;
+private Scanner input;
+private PrintWriter output;
 
-    public ClientHandler(Socket client)
+    public ClientHandler(Socket socket)
     {
-        this.client = client;
+        this.socket = socket;
+
+        try{
+
+            input = new Scanner(socket.getInputStream());
+            output = new PrintWriter(socket.getOutputStream(), true);
+        }
+        catch (IOException ioEx)
+        {
+            ioEx.printStackTrace();
+        }
     }
 
     @Override
     public void run() {
-        MessageReceiver receiver = new MessageReceiver(client);
+        MessageReceiver receiver = new MessageReceiver(socket, input, output);
         //MessageSender sender = new MessageSender(client);
 
         receiver.start();
