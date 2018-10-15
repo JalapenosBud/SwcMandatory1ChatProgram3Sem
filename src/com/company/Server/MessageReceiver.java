@@ -34,13 +34,9 @@ public class MessageReceiver extends Thread {
         do {
             incoming = input.nextLine();
             //if not JOIN msg received
-            if(!incoming.contains("JOIN")) {
-                System.out.println("Waiting for client to connect...");
-                //output.println("enter username...");
-            }
-            else if(incoming.contains("JOIN"))
-            {
+            if(incoming.contains("JOIN")) {
                 checkIfUserJoins(incoming);
+                //output.println("enter username...");
             }
             else if(incoming.contains("DATA"))
             {
@@ -52,8 +48,10 @@ public class MessageReceiver extends Thread {
                     case "DATA":
                         //TODO: print out to all other uses
                         output.println(inputDataOutputMessage(incoming));
+                        break;
                         // break;
                 }
+                output.println("J_OK");
             }
         }while (!incoming.equals("**QUIT**"));
 
