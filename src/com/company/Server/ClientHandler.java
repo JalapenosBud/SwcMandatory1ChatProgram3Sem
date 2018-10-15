@@ -28,8 +28,16 @@ private PrintWriter output;
 
     @Override
     public void run() {
+<<<<<<< HEAD
+        //MessageReceiver receiver = new MessageReceiver(client);
+        MessageSender sender = new MessageSender(client);
+
+        //receiver.start();
+        sender.start();
+=======
         MessageReceiver receiver = new MessageReceiver(socket, input, output);
 
         receiver.start();
+>>>>>>> 765d7b34e195d8f66d97254acab5c63681fb497f
     }
 }

@@ -31,6 +31,8 @@ public class MessageReceiver extends Thread {
 
     @Override
     public void run() {
+<<<<<<< HEAD
+=======
 
         do {
             incoming = input.nextLine();
@@ -55,6 +57,7 @@ public class MessageReceiver extends Thread {
                 output.println("J_OK");
             }
         }while (!incoming.equals("**QUIT**"));
+>>>>>>> 765d7b34e195d8f66d97254acab5c63681fb497f
 
         try {
             if (client != null) {
@@ -140,6 +143,18 @@ public class MessageReceiver extends Thread {
                 }
             }
             hasClientConnected = true;
+<<<<<<< HEAD
+
+            try {
+                if (client == null) {
+                    System.out.println("Closing down connection…");
+                    client.close();
+                }
+            } catch (IOException ioEx) {
+                System.out.println("Unable to disconnect!");
+            }
+=======
+>>>>>>> 765d7b34e195d8f66d97254acab5c63681fb497f
         }
     }
 
