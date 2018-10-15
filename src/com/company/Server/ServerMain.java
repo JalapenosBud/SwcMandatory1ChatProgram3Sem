@@ -15,9 +15,9 @@ public class ServerMain {
 
     //public  static List<Client> clients = new ArrayList<>();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
-        Socket mySocket = null;
+
 
         try{
             serverSocket = new ServerSocket(port);
@@ -29,21 +29,19 @@ public class ServerMain {
         }
 
         do {
-
-            try{
-                //System.out.println("\u001B[33mHello");
-                mySocket = serverSocket.accept();
-                ClientHandler handler = new ClientHandler(mySocket);
-                handler.start();
-            }
-            catch (IOException e)
-            {
-                System.out.println("couldnt connect");
-                System.exit(1);
-            }
-
+            handleClient();
 
         }while(true);
+    }
+
+    private static void handleClient() throws IOException {
+        do {
+            System.out.println("wait for client...");
+            Socket mySocket = serverSocket.accept();
+            System.out.println("\nNew client accepted.\n");
+            ClientHandler handler = new ClientHandler(mySocket);
+            handler.start();
+        }while (true);
     }
 
 }
