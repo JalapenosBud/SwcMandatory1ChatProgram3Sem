@@ -29,9 +29,7 @@ private PrintWriter output;
     @Override
     public void run() {
         MessageReceiver receiver = new MessageReceiver(socket, input, output);
-        //MessageSender sender = new MessageSender(client);
 
         receiver.start();
-        //sender.start();
     }
 }

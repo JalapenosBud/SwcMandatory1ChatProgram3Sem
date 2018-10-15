@@ -36,6 +36,7 @@ public class ServerMain {
 
     private static void handleClient() throws IOException {
         do {
+            System.out.println("wait for client...");
             Socket mySocket = serverSocket.accept();
             System.out.println("\nNew client accepted.\n");
             ClientHandler handler = new ClientHandler(mySocket);

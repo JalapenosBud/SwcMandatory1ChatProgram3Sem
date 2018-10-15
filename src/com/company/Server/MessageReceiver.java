@@ -12,7 +12,7 @@ import static com.company.Utilities.StringUtilities.splitJoinProtocol;
 
 public class MessageReceiver extends Thread {
 
-    String received;
+    String incoming;
     boolean hasClientConnected = false;
 
     private Scanner input;
@@ -28,36 +28,35 @@ public class MessageReceiver extends Thread {
     }
 
     @Override
-    public synchronized void run() {
+    public void run() {
 
         do {
 
-            received = input.nextLine();
+            incoming = input.nextLine();
             //if not JOIN msg received
-            while (!received.contains("JOIN")) {
+            if(!incoming.contains("JOIN")) {
                 System.out.println("Waiting for client to connect...");
-                output.println("enter username...");
+                //output.println("enter username...");
+            }
+            else
+            {
+                checkIfUserJoins(incoming);
             }
             //go and check if join is received
-            checkIfUserJoins();
-        }while (!received.equals("**QUIT**"));
-        try{
-            if(client != null)
-            {
-                System.out.println("Closing connection");
-                client.close();
-            }
-        } catch (IOException ioEx) {
-            ioEx.printStackTrace();
-        }
+
+        }while (!hasClientConnected);
 
         if(hasClientConnected)
         {
             while(true)
             {
-                System.out.println("messaged received");
-                output.println("SERVER> " + received);
-                received = input.nextLine();
+                if(incoming!=null)
+                {
+                    System.out.println("message received " + incoming);
+                    //newInput = input.nextLine();
+                    output.println("SERVER> " + incoming);
+                }
+
             }
         }
         try {
@@ -72,7 +71,7 @@ public class MessageReceiver extends Thread {
 
     }
 
-    private void checkIfUserJoins()
+    private void checkIfUserJoins(String received)
     {
         hasClientConnected = false;
         while(!hasClientConnected)
