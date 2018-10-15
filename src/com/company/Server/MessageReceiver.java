@@ -31,9 +31,6 @@ public class MessageReceiver extends Thread {
 
     @Override
     public void run() {
-<<<<<<< HEAD
-=======
-
         do {
             incoming = input.nextLine();
             //if not JOIN msg received
@@ -59,7 +56,6 @@ public class MessageReceiver extends Thread {
                 }
             }
         }while (!incoming.equals("**QUIT**"));
->>>>>>> 765d7b34e195d8f66d97254acab5c63681fb497f
 
         try {
             if (client != null) {
@@ -145,7 +141,6 @@ public class MessageReceiver extends Thread {
                 }
             }
             hasClientConnected = true;
-<<<<<<< HEAD
 
             try {
                 if (client == null) {
@@ -155,8 +150,6 @@ public class MessageReceiver extends Thread {
             } catch (IOException ioEx) {
                 System.out.println("Unable to disconnect!");
             }
-=======
->>>>>>> 765d7b34e195d8f66d97254acab5c63681fb497f
         }
     }
 
