@@ -44,7 +44,7 @@ public class MessageSender extends Thread{
             //the whole message we receive
             //System.out.print(received1);
 
-        while(!received1.equals("**QUIT**"))
+        /*while(!received1.equals("**QUIT**"))
         {
             String[] tmpInfo = StringUtilities.splitDataProtocol(received1);
             //TODO: this will never execute cause tmpinfo isnt updated since the client has joined
@@ -56,7 +56,7 @@ public class MessageSender extends Thread{
                     output.println(inputDataOutputMessage(received1));
                     // break;
             }
-        }
+        }*/
 
     }
 }

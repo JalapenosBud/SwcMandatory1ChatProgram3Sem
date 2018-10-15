@@ -1,6 +1,7 @@
 package com.company.Server;
 
 import com.company.Client.Client;
+import com.company.Utilities.StringUtilities;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -8,6 +9,7 @@ import java.net.Socket;
 import java.util.Scanner;
 
 import static com.company.Utilities.ClientUtilities.returnNewClient;
+import static com.company.Utilities.StringUtilities.inputDataOutputMessage;
 import static com.company.Utilities.StringUtilities.splitJoinProtocol;
 
 public class MessageReceiver extends Thread {
@@ -31,34 +33,31 @@ public class MessageReceiver extends Thread {
     public void run() {
 
         do {
-
             incoming = input.nextLine();
             //if not JOIN msg received
             if(!incoming.contains("JOIN")) {
                 System.out.println("Waiting for client to connect...");
                 //output.println("enter username...");
             }
-            else
+            else if(incoming.contains("JOIN"))
             {
                 checkIfUserJoins(incoming);
             }
-            //go and check if join is received
-
-        }while (!hasClientConnected);
-
-        if(hasClientConnected)
-        {
-            while(true)
+            else if(incoming.contains("DATA"))
             {
-                if(incoming!=null)
+                String[] tmpInfo = StringUtilities.splitDataProtocol(incoming);
+                //TODO: this will never execute cause tmpinfo isnt updated since the client has joined
+                //TODO: it needs to read and break up the new message
+                switch (tmpInfo[0])
                 {
-                    System.out.println("message received " + incoming);
-                    //newInput = input.nextLine();
-                    output.println("SERVER> " + incoming);
+                    case "DATA":
+                        //TODO: print out to all other uses
+                        output.println(inputDataOutputMessage(incoming));
+                        // break;
                 }
-
             }
-        }
+        }while (!incoming.equals("**QUIT**"));
+
         try {
             if (client != null) {
                 System.out.println("Closing down connection…");
@@ -67,8 +66,6 @@ public class MessageReceiver extends Thread {
         } catch (IOException ioEx) {
             System.out.println("Unable to disconnect!");
         }
-
-
     }
 
     private void checkIfUserJoins(String received)
