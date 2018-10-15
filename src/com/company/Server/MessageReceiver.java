@@ -31,15 +31,47 @@ public class MessageReceiver extends Thread {
         try {
             input = new Scanner(client.getInputStream());
             output = new PrintWriter(client.getOutputStream(), true);
+
+            received = input.nextLine();
+            //if not JOIN msg received
+            while(!received.contains("JOIN"))
+            {
+                System.out.println("Waiting for client to connect...");
+                output.println("enter username...");
+            }
+            //go and check if join is received
+            checkIfUserJoins();
+
         } catch (IOException ioEx) {
             ioEx.printStackTrace();
         }
+
+        if(hasClientConnected)
+        {
+            while(true)
+            {
+                System.out.println("messaged received");
+                output.println("SERVER> " + received);
+                received = input.nextLine();
+            }
+        }
+        try {
+            if (client != null) {
+                System.out.println("Closing down connection…");
+                client.close();
+            }
+        } catch (IOException ioEx) {
+            System.out.println("Unable to disconnect!");
+        }
+
+
+    }
+
+    private void checkIfUserJoins()
+    {
+        hasClientConnected = false;
         while(!hasClientConnected)
         {
-            System.out.println("waiting for client to connect");
-            //client msg
-            received = input.nextLine();
-
             String[] tmpInfo = splitJoinProtocol(received);
             System.out.println("name is : " + tmpInfo[1] + " before checking JOIN message");
 
@@ -106,19 +138,10 @@ public class MessageReceiver extends Thread {
                             }
                         }
                     }
-
                 }
             }
             hasClientConnected = true;
-
-            try {
-                if (client != null) {
-                    System.out.println("Closing down connection…");
-                    client.close();
-                }
-            } catch (IOException ioEx) {
-                System.out.println("Unable to disconnect!");
-            }
         }
     }
+
 }

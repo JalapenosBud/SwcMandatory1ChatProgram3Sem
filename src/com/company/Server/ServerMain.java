@@ -17,7 +17,7 @@ public class ServerMain {
 
     public static void main(String[] args) {
 
-        Socket mySocket = null;
+
 
         try{
             serverSocket = new ServerSocket(port);
@@ -29,21 +29,38 @@ public class ServerMain {
         }
 
         do {
-
-            try{
-                //System.out.println("\u001B[33mHello");
-                mySocket = serverSocket.accept();
-                ClientHandler handler = new ClientHandler(mySocket);
-                handler.start();
-            }
-            catch (IOException e)
-            {
-                System.out.println("couldnt connect");
-                System.exit(1);
-            }
-
+            handleClient();
 
         }while(true);
+    }
+
+    private static void handleClient()
+    {
+        Socket mySocket = null;
+
+        try{
+            //System.out.println("\u001B[33mHello");
+            mySocket = serverSocket.accept();
+            ClientHandler handler = new ClientHandler(mySocket);
+            handler.start();
+        }
+        catch(IOException ioEx)
+        {
+            ioEx.printStackTrace();
+        }
+        finally
+        {
+            try
+            {
+                System.out.println("\n* Closing connection… *");
+                mySocket.close();
+            }
+            catch(IOException ioEx)
+            {
+                System.out.println("Unable to disconnect!");
+                System.exit(1);
+            }
+        }
     }
 
 }

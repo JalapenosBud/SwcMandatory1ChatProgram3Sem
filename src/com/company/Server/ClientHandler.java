@@ -14,9 +14,9 @@ public class ClientHandler extends Thread {
     @Override
     public void run() {
         MessageReceiver receiver = new MessageReceiver(client);
-        MessageSender sender = new MessageSender(client);
+        //MessageSender sender = new MessageSender(client);
 
         receiver.start();
-        sender.start();
+        //sender.start();
     }
 }
