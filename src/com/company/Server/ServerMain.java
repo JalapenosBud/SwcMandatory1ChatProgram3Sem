@@ -15,7 +15,7 @@ public class ServerMain {
 
     //public  static List<Client> clients = new ArrayList<>();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
 
 
@@ -34,19 +34,9 @@ public class ServerMain {
         }while(true);
     }
 
-    private static void handleClient()
-    {
-        Socket mySocket = null;
-
-        try{
-            //System.out.println("\u001B[33mHello");
-            mySocket = serverSocket.accept();
-        }
-        catch(IOException ioEx)
-        {
-            ioEx.printStackTrace();
-        }
+    private static void handleClient() throws IOException {
         do {
+            Socket mySocket = serverSocket.accept();
             System.out.println("\nNew client accepted.\n");
             ClientHandler handler = new ClientHandler(mySocket);
             handler.start();
