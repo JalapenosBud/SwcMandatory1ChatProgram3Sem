@@ -50,24 +50,14 @@ private PrintWriter output;
                     checkIfUserJoins(saveString);
                     break;
                 case "DATA":
+                    String[] tmpInfo = StringUtilities.splitDataProtocol(incoming);
                     //TODO: fix and input data protocol
-                    System.out.println("got a data message");
+                    output.println(inputDataOutputMessage(incoming));
+                    System.out.println("got a data message: " + tmpInfo[2]);
                     break;
                     
                     default:
                         System.out.print("NO DATA");
-            }
-            
-            if(incoming.contains("DATA"))
-            {
-                String[] tmpInfo = StringUtilities.splitDataProtocol(incoming);
-                switch (tmpInfo[0])
-                {
-                    case "DATA":
-                        output.println(inputDataOutputMessage(incoming));
-                        break;
-                    // break;
-                }
             }
         }while (!incoming.equals("**QUIT**"));
         
@@ -115,24 +105,28 @@ private PrintWriter output;
         {
             //TODO: error happens cause it reaches and element that isnt equal the one incoming... lol..
             //loop through
+            System.out.println("size is " + ClientListManager.getInstance().getSize() + " in > 0");
+            System.out.println("current incoming client name is: " + tmpInfo[1]);
+            System.out.println("entering loop\n");
             for(int i = 0; i < ClientListManager.getInstance().getSize(); i++)
             {
-                System.out.println("looping over: #" + i + ", "+ClientListManager.getInstance().getClient(i) + " client.");
-                System.out.println("size is " + ClientListManager.getInstance().getSize() + " in > 0");
-                System.out.println("current incoming client name is: " + tmpInfo[1]);
+                System.out.println("looping over: #" + i + ", "+ClientListManager.getInstance().getClient(i) + " client.\n");
                 
                 //get name of clients and check if exists
                 //if user name exists
                 if(tmpInfo[1].equals(ClientListManager.getInstance().getClient(i).getName()))
                 {
+                    System.out.println("sending J_ERR");
                     output.println("J_ERR");
                     //set to false and start loop over?
-                    System.out.println(tmpInfo[1] + " already exists on server");
+                    System.out.println(tmpInfo[1] + " already exists on server\n");
                     break;
                 }
                 else
                 {
+                    System.out.println("now adding: " + tmpInfo[1] + "\n");
                     tryToAddUser(incoming);
+                    break;
                 }
             }
             
