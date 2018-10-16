@@ -7,6 +7,7 @@ import java.util.List;
 
 public class ClientListManager {
 
+    //TODO: look into making this completely thread safe..
     private static ClientListManager instance = null;
 
     private List<Client> clients = new ArrayList<>();
