@@ -21,12 +21,14 @@ public class ClientListManager {
         return instance;
     }
     
-    public synchronized void showAllClients()
+    public synchronized String showAllClients()
     {
+        String tmp = "";
         for (Client c : clients)
         {
-            System.out.println(c + " is connected");
+            tmp += c.getName() + ", ";
         }
+        return tmp;
     }
 
     public synchronized void addToList(Client client)

@@ -47,7 +47,11 @@ private PrintWriter output;
             {
                 case "JOIN":
                     System.out.println("received a join message");
-                    checkIfUserJoins(saveString);
+                    try {
+                        checkIfUserJoins(saveString);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     break;
                 case "DATA":
                     String[] tmpInfo = StringUtilities.splitDataProtocol(incoming);
@@ -65,9 +69,12 @@ private PrintWriter output;
                     }
                     break;
                 case "LIST":
-                    ClientListManager.getInstance().showAllClients();
+                    output.println(ClientListManager.getInstance().showAllClients());
+                    break;
+                    
                     default:
                         System.out.print("NO DATA");
+                        break;
             }
             //TODO: this never reaches?? hmm dunno for now
         }while (!incoming.equals("CLOSE_SERVER"));
@@ -100,20 +107,28 @@ private PrintWriter output;
         }
     }
     
-    private void checkIfUserJoins(String incoming)
-    {
+    private void checkIfUserJoins(String incoming) throws IOException {
         String[] tmpInfo = splitJoinProtocol(incoming);
         System.out.println("name is : " + tmpInfo[1] + " before checking JOIN message");
+        
+        Client tmpClient = null;
         
         if(ClientListManager.getInstance().getSize() == 0)
         {
             System.out.println("size is in == 0" + ClientListManager.getInstance().getSize());
-            tryToAddUser(incoming);
+            tmpClient = returnNewClient(incoming);
+            
+            ClientListManager.getInstance().addToList(tmpClient);
+            System.out.println("\nNow added" + tmpClient.getName());
+            //tryToAddUser(incoming);
+            output.println("J_OK");
+            System.out.println("J_OK sent");
             
         }
         //if there already are people on the server
         else if(ClientListManager.getInstance().getSize() > 0)
         {
+            tmpClient = returnNewClient(incoming);
             //loop through
             System.out.println("size is " + ClientListManager.getInstance().getSize() + " in > 0");
             System.out.println("current incoming client name is: " + tmpInfo[1]);
@@ -124,21 +139,26 @@ private PrintWriter output;
                 
                 //get name of clients and check if exists
                 //if user name exists
-                if(tmpInfo[1].equals(ClientListManager.getInstance().getClient(i).getName()))
+                if(ClientListManager.getInstance().getClient(i).getName().equalsIgnoreCase(tmpClient.getName()))
                 {
                     System.out.println("sending J_ERR");
                     output.println("J_ERR");
                     //set to false and start loop over?
                     System.out.println(tmpInfo[1] + " already exists on server\n");
                     break;
-                }
-                else
-                {
-                    System.out.println("now adding: " + tmpInfo[1] + "\n");
-                    tryToAddUser(incoming);
+                }else {
+                    
+                    System.out.println("going to add " + tmpClient.getName() + " now..");
+                    ClientListManager.getInstance().addToList(tmpClient);
+                    System.out.println("\nNow added" + tmpClient.getName());
+                    output.println("J_OK");
+                    System.out.println("J_OK sent");
                     break;
                 }
             }
+            System.out.println("after loop calls");
+            //System.out.println("now adding: " + tmpInfo[1] + "\n");
+            //tryToAddUser(incoming);
             
         }
     }
