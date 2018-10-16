@@ -20,6 +20,14 @@ public class ClientListManager {
         }
         return instance;
     }
+    
+    public synchronized void showAllClients()
+    {
+        for (Client c : clients)
+        {
+            System.out.println(c + " is connected");
+        }
+    }
 
     public synchronized void addToList(Client client)
     {

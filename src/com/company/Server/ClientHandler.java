@@ -54,12 +54,23 @@ private PrintWriter output;
                     //TODO: fix and input data protocol
                     output.println(inputDataOutputMessage(incoming));
                     System.out.println("got a data message: " + tmpInfo[2]);
+                    if(tmpInfo[2].equals("QUIT"))
+                    {
+                        try {
+                            //TODO: fix so it closes down this thread / client socket connection
+                            socket.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
                     break;
-                    
+                case "LIST":
+                    ClientListManager.getInstance().showAllClients();
                     default:
                         System.out.print("NO DATA");
             }
-        }while (!incoming.equals("**QUIT**"));
+            //TODO: this never reaches?? hmm dunno for now
+        }while (!incoming.equals("CLOSE_SERVER"));
         
         try {
             if (socket != null) {
@@ -103,7 +114,6 @@ private PrintWriter output;
         //if there already are people on the server
         else if(ClientListManager.getInstance().getSize() > 0)
         {
-            //TODO: error happens cause it reaches and element that isnt equal the one incoming... lol..
             //loop through
             System.out.println("size is " + ClientListManager.getInstance().getSize() + " in > 0");
             System.out.println("current incoming client name is: " + tmpInfo[1]);
