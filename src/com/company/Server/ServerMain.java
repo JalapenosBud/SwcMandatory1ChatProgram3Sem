@@ -26,10 +26,13 @@ public class ServerMain {
         do {
             System.out.println("wait for client...");
             Socket mySocket = serverSocket.accept();
+            
             System.out.println("\nNew client accepted.\n");
             ClientHandler handler = new ClientHandler(mySocket);
             handler.start();
+            
             System.out.println("thread: " + handler.getName() + " is now started");
+            
         }while (true);
     }
 
