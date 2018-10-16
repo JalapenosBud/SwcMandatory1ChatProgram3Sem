@@ -33,6 +33,15 @@ public class ServerMain {
             
             System.out.println("thread: " + handler.getName() + " is now started");
             
+            //TODO: bad place to test but make this into a byte array
+            /*String joined = "peter has joined";
+            char[] chars = joined.toCharArray();
+            
+            for (int i = 0; i < ClientListManager.getInstance().getSize(); i++) {
+                ClientListManager.getInstance().getClient(i).getSocket().getOutputStream().write();
+            }*/
+            
+            //ClientListManager.getInstance().getClient().getSocket();
         }while (true);
     }
 
