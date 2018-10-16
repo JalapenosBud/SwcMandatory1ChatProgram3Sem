@@ -41,12 +41,9 @@ public class MessageReceiver extends Thread {
             else if(incoming.contains("DATA"))
             {
                 String[] tmpInfo = StringUtilities.splitDataProtocol(incoming);
-                //TODO: this will never execute cause tmpinfo isnt updated since the client has joined
-                //TODO: it needs to read and break up the new message
                 switch (tmpInfo[0])
                 {
                     case "DATA":
-                        //TODO: print out to all other uses
                         output.println(inputDataOutputMessage(incoming));
                         break;
                         // break;
@@ -109,7 +106,6 @@ public class MessageReceiver extends Thread {
 
                             //get name of clients and check if exists
                             //if user name exists
-                            //TODO: client index i new client is assigned before tmpInfo[1] is checked??
                             if(tmpInfo[1].equals(ClientListManager.getInstance().getClient(i).getName()))
                             {
 

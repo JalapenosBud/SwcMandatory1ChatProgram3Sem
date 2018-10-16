@@ -13,11 +13,7 @@ public class ServerMain {
     static ServerSocket serverSocket;
     private static final int port = 1234;
 
-    //public  static List<Client> clients = new ArrayList<>();
-
     public static void main(String[] args) throws IOException {
-
-
 
         try{
             serverSocket = new ServerSocket(port);
@@ -40,6 +36,7 @@ public class ServerMain {
             Socket mySocket = serverSocket.accept();
             System.out.println("\nNew client accepted.\n");
             ClientHandler handler = new ClientHandler(mySocket);
+            System.out.println("starting " + handler.getName() + " thread");
             handler.start();
         }while (true);
     }
