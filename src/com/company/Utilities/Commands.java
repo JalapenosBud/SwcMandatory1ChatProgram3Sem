@@ -29,7 +29,7 @@ public class Commands {
 
     public static String send_QUIT()
     {
-        return "";
+        return "QUIT";
     }
 
     public static String send_LIST()
