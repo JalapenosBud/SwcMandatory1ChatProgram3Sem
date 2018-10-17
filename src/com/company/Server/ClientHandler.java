@@ -6,6 +6,7 @@ import com.company.Utilities.StringUtilities;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import static com.company.Utilities.ClientUtilities.returnNewClient;
@@ -13,7 +14,7 @@ import static com.company.Utilities.StringUtilities.inputDataOutputMessage;
 import static com.company.Utilities.StringUtilities.splitFirst;
 import static com.company.Utilities.StringUtilities.splitJoinProtocol;
 
-public class ClientHandler extends Thread {
+public class ClientHandler implements Runnable {
 
 private Scanner input;
 private PrintWriter output;
@@ -37,10 +38,37 @@ private PrintWriter output;
         }
     }
     
+    private void sendToAllUsers(String message)
+    {
+        if(ClientListManager.getInstance().getSize() <= 1)
+            return;
+    
+        try {
+            for (Client c : ClientListManager.getInstance().getClients())
+            {
+                output = new PrintWriter(c.getSocket().getOutputStream(), true);
+                output.println(c.getName() + ": " + message);
+    
+                System.out.println("sending to: " + c.getName() + " listening on: " + c.getSocket());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
     @Override
     public void run() {
         do {
-            incoming = input.nextLine();
+            //string to check what protocol is incoming
+            try{
+                incoming = input.nextLine();
+                //saving the full string for further usage, ie splitting up the message into parts, for specific user name or message element
+                
+            }
+            catch (NoSuchElementException ioe)
+            {
+                System.out.println(ioe);
+            }
             String saveString = incoming;
             
             switch (splitFirst(incoming))
@@ -55,28 +83,12 @@ private PrintWriter output;
                     break;
                 case "DATA":
                     String[] tmpInfo = StringUtilities.splitDataProtocol(incoming);
-                    //TODO: fix and input data protocol
-                    output.println(inputDataOutputMessage(incoming));
-                    System.out.println("got a data message: " + tmpInfo[2]);
-                    if(tmpInfo[2].equals("QUIT"))
-                    {
-                        try {
-                            //TODO: fix so it closes down this thread / client socket connection
-                            socket.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    break;
+                    sendToAllUsers(tmpInfo[2]);
+                    
                 case "LIST":
                     output.println(ClientListManager.getInstance().showAllClients());
                     break;
-                    
-                    default:
-                        System.out.print("NO DATA");
-                        break;
             }
-            //TODO: this never reaches?? hmm dunno for now
         }while (!incoming.equals("CLOSE_SERVER"));
         
         try {
@@ -86,24 +98,6 @@ private PrintWriter output;
             }
         } catch (IOException ioEx) {
             System.out.println("Unable to disconnect!");
-        }
-    }
-    
-    private void tryToAddUser(String received)
-    {
-        Client tmpClient = null;
-        try {
-            tmpClient = returnNewClient(received);
-        
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        finally {
-            ClientListManager.getInstance().addToList(tmpClient);
-            System.out.println(tmpClient.getName() + " was added to the server");
-        
-            output.println("J_OK");
-            System.out.println("J_OK sent");
         }
     }
     
@@ -129,37 +123,21 @@ private PrintWriter output;
         else if(ClientListManager.getInstance().getSize() > 0)
         {
             tmpClient = returnNewClient(incoming);
-            //loop through
-            System.out.println("size is " + ClientListManager.getInstance().getSize() + " in > 0");
-            System.out.println("current incoming client name is: " + tmpInfo[1]);
-            System.out.println("entering loop\n");
+            
             for(int i = 0; i < ClientListManager.getInstance().getSize(); i++)
             {
-                System.out.println("looping over: #" + i + ", "+ClientListManager.getInstance().getClient(i) + " client.\n");
-                
                 //get name of clients and check if exists
                 //if user name exists
                 if(ClientListManager.getInstance().getClient(i).getName().equalsIgnoreCase(tmpClient.getName()))
                 {
-                    System.out.println("sending J_ERR");
                     output.println("J_ERR");
                     //set to false and start loop over?
-                    System.out.println(tmpInfo[1] + " already exists on server\n");
-                    break;
-                }else {
-                    
-                    System.out.println("going to add " + tmpClient.getName() + " now..");
-                    ClientListManager.getInstance().addToList(tmpClient);
-                    System.out.println("\nNow added" + tmpClient.getName());
-                    output.println("J_OK");
-                    System.out.println("J_OK sent");
+                    System.out.println(tmpClient.getName() + " already exists on server\n");
                     break;
                 }
             }
-            System.out.println("after loop calls");
-            //System.out.println("now adding: " + tmpInfo[1] + "\n");
-            //tryToAddUser(incoming);
-            
+            ClientListManager.getInstance().addToList(tmpClient);
+            output.println("J_OK");
         }
     }
 }

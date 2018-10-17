@@ -24,24 +24,22 @@ public class ServerMain {
         }
         
         do {
-            System.out.println("wait for client...");
-            Socket mySocket = serverSocket.accept();
+            try{
+                System.out.println("wait for client...");
+                Socket mySocket = serverSocket.accept();
+    
+                System.out.println("\nNew client accepted.\n");
+                Thread handler = new Thread(new ClientHandler(mySocket));
+                handler.start();
+    
+                System.out.println("thread: " + handler.getName() + " is now started");
+            }
+            catch (IOException io)
+            {
+                io.printStackTrace();
+            }
             
-            System.out.println("\nNew client accepted.\n");
-            ClientHandler handler = new ClientHandler(mySocket);
-            handler.start();
             
-            System.out.println("thread: " + handler.getName() + " is now started");
-            
-            //TODO: bad place to test but make this into a byte array
-            /*String joined = "peter has joined";
-            char[] chars = joined.toCharArray();
-            
-            for (int i = 0; i < ClientListManager.getInstance().getSize(); i++) {
-                ClientListManager.getInstance().getClient(i).getSocket().getOutputStream().write();
-            }*/
-            
-            //ClientListManager.getInstance().getClient().getSocket();
         }while (true);
     }
 
