@@ -43,7 +43,6 @@ public class ClientHandler extends Thread {
             //here we do that^
             received = input.nextLine();
             
-            
             if(received != null)
             {
                 switch (splitFirst(received))
@@ -115,7 +114,6 @@ public class ClientHandler extends Thread {
         //if there already are people on the server
         else if(ClientListManager.getInstance().getSize() > 0)
         {
-            
             for(int i = 0; i < ClientListManager.getInstance().getSize(); i++)
             {
                 //get name of clients and check if exists
