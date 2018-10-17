@@ -34,6 +34,6 @@ public class Commands {
 
     public static String send_LIST()
     {
-        return "";
+        return "LIST";
     }
 }

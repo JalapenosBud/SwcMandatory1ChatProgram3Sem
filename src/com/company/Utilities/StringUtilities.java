@@ -11,6 +11,12 @@ public class StringUtilities {
         return ip.getLocalAddress().toString().replaceAll("/","");
     }
 
+    public static String splitFirst(String incoming)
+    {
+        String[] splitCommand = incoming.split(" " ,2);
+        
+        return splitCommand[0];
+    }
 
     //PROTOCOL: DATA <<user_name>>: <<free text…>>
     //[0] = DATA
@@ -40,7 +46,6 @@ public class StringUtilities {
             tempArray[i] = tempArray[i].replaceAll("^<<|>>$", "");
 
         }
-        //TODO:
         return tempArray;
     }
 
@@ -59,12 +64,11 @@ public class StringUtilities {
         String[] splitArrayWhitespace = splitArrayWhitespace = info.split(Pattern.quote(" "));
         String[] splitArrayComma = splitArrayWhitespace[1].split(Pattern.quote(","));
         String[] splitArrayColon = splitArrayWhitespace[2].split(Pattern.quote(":"));
-        //TODO: split further up and save port in its own string
         /**
-         * 0, tempInfo[0] = JOIN MSG
-         * 1, tempinfo2[0] = USERNAME
-         * 2, newTmp[0] = IP ADDRESS
-         * 3, newTmp[1] = PORT
+         * 0, splitArrayWhitespace[0] = JOIN
+         * 1, splitArrayComma[0] = USERNAME
+         * 2, splitArrayColon[0] = IP ADDRESS
+         * 3, splitArrayColon[1] = PORT
          */
         String[] tempArray = {splitArrayWhitespace[0],splitArrayComma[0],splitArrayColon[0],splitArrayColon[1]};
 
@@ -97,8 +101,7 @@ public class StringUtilities {
     public static String inputDataOutputMessage(String input)
     {
         String[] tmpArr = splitDataProtocol(input);
-        //TODO: split incoming data up and use message element only
-        //TODO: is done?
+        //TODO: need to test if this class does what it needs to do
         return tmpArr[2];
     }
 
