@@ -2,9 +2,9 @@ package com.company.Utilities;
 
 public class Commands {
 
-    public static String send_JOIN()
+    public static String send_JOIN(String name, String ipAddress, int port)
     {
-        return "";
+        return "JOIN " + name + ", <<" + ipAddress + ">>:<<" + port+">>";
     }
 
     public static String send_DATA(String clientName, String message)
@@ -22,9 +22,9 @@ public class Commands {
         return "";
     }
 
-    public static String send_IMAV()
+    public static String send_IMAV(String name)
     {
-        return "";
+        return "IMAV " + name;
     }
 
     public static String send_QUIT()

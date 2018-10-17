@@ -20,6 +20,7 @@ public class ClientUtilities {
         String[] tmpArr = splitJoinProtocol(stringFromClient);
         //pass in ip address
         Socket tmpSocket = new Socket(tmpArr[2],1234);
-        return new Client(tmpArr[1], STRIPTHEFUCKINGSLASHOFFMYIPADDRESS(tmpSocket),Integer.parseInt(tmpArr[3]));
+        return null;
+        //return new Client(tmpArr[1], STRIPTHEFUCKINGSLASHOFFMYIPADDRESS(tmpSocket),Integer.parseInt(tmpArr[3]));
     }
 }
