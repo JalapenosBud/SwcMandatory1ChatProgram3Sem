@@ -14,29 +14,129 @@ import static com.company.Utilities.StringUtilities.inputDataOutputMessage;
 import static com.company.Utilities.StringUtilities.splitFirst;
 import static com.company.Utilities.StringUtilities.splitJoinProtocol;
 
-public class ClientHandler implements Runnable {
-
-private Scanner input;
-private PrintWriter output;
+public class ClientHandler extends Thread {
     
-    String incoming;
+    private Socket clientSocket;
+    private Scanner input;
+    private PrintWriter output;
     
-    Socket socket;
-
     public ClientHandler(Socket socket)
     {
-        this.socket = socket;
-
+        //set this objects socket to whatever is incoming
+        clientSocket = socket;
         try{
-
-            input = new Scanner(socket.getInputStream());
-            output = new PrintWriter(socket.getOutputStream(), true);
+            input = new Scanner(clientSocket.getInputStream());
+            output = new PrintWriter(clientSocket.getOutputStream(),true);
         }
-        catch (IOException ioEx)
+        catch (IOException ioex)
         {
-            ioEx.printStackTrace();
+            ioex.printStackTrace();
         }
     }
+    
+    public void run()
+    {
+        //string to pass incoming string to from the clien'ts input stream, ie what gets sent to us
+        String received;
+        
+        do {
+            //here we do that^
+            received = input.nextLine();
+            
+            
+            if(received != null)
+            {
+                switch (splitFirst(received))
+                {
+                    case "JOIN":
+                        System.out.println("received a join message");
+                        try {
+                            checkIfUserJoins(received,clientSocket);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    case "DATA":
+                        String[] tmpInfo = StringUtilities.splitDataProtocol(received);
+                        sendToAllUsers(tmpInfo[2]);
+        
+                    case "LIST":
+                        output.println(ClientListManager.getInstance().showAllClients());
+                        break;
+                }
+                
+                //this sends the message to all users
+                
+            }
+            //echo msg back to client
+            //output.println("ECHO: " + received);
+            //repeat untill QUIT is received
+        }while(!received.equals("QUIT"));
+        
+        try{
+            //its only possible to terminate a connection if the client exists
+            if(clientSocket != null)
+            {
+                System.out.println("Closing down connection");
+                clientSocket.close();
+            }
+        }catch (IOException ioex)
+        {
+            System.out.println("Unable to disconnect");
+        }
+    }
+
+    private void sendToAllUsers(String msg)
+    {
+        for (Client s :
+                ServerMain.clients) {
+            try {
+                output = new PrintWriter(s.getSocket().getOutputStream(), true);
+                output.println(msg);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    
+    private void checkIfUserJoins(String incoming, Socket socket) throws IOException {
+        String[] tmpInfo = splitJoinProtocol(incoming);
+        System.out.println("name is : " + tmpInfo[1] + " before checking JOIN message");
+        
+        if(ClientListManager.getInstance().getSize() == 0)
+        {
+    
+            ServerMain.clients.add(new Client(tmpInfo[1],socket));
+            //tryToAddUser(incoming);
+            output.println("J_OK");
+            System.out.println("J_OK sent");
+            
+        }
+        //if there already are people on the server
+        else if(ClientListManager.getInstance().getSize() > 0)
+        {
+            
+            for(int i = 0; i < ClientListManager.getInstance().getSize(); i++)
+            {
+                //get name of clients and check if exists
+                //if user name exists
+                if(ServerMain.clients.get(i).getName().equals(tmpInfo[1]))
+                {
+                    output.println("J_ERR");
+                    return;
+                }
+                else {
+                    output.println("J_OK");
+                    ServerMain.clients.add(new Client(tmpInfo[1],socket));
+                }
+            }
+            
+        }
+    }
+    
+/*private Scanner input;
+private PrintWriter output;
+    
     
     private void sendToAllUsers(String message)
     {
@@ -139,5 +239,5 @@ private PrintWriter output;
             ClientListManager.getInstance().addToList(tmpClient);
             output.println("J_OK");
         }
-    }
+    }*/
 }
