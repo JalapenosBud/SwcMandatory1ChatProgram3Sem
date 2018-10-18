@@ -38,7 +38,10 @@ public class ServerMain {
             ClientHandler handler = new ClientHandler(client);
             handler.start();
             
+            
         }while(true);
+        
+        
     }
     
     public static void removeAndUpdateList(String username)
@@ -49,9 +52,15 @@ public class ServerMain {
             Client client = clientIterator.next();
             if(client.getName().equals(username))
             {
+                client.setAmIAlive(false);
                 clientIterator.remove();
             }
         }
+    }
+    
+    private static void checkusersonline()
+    {
+    
     }
 
 }

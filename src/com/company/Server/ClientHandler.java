@@ -61,7 +61,6 @@ public class ClientHandler extends Thread {
                             }
                             break;
                         case "DATA":
-                            //TODO: the list blocks the server some how, maybe it's the return statement
                             String[] tmpInfo = StringUtilities.splitDataProtocol(received);
                             if(tmpInfo[2].contains("LIST"))
                             {
@@ -148,13 +147,10 @@ public class ClientHandler extends Thread {
     private void checkIfUserJoins(String incoming, Socket socket) throws IOException {
         String[] tmpInfo = splitJoinProtocol(incoming);
         System.out.println("name is : " + tmpInfo[1] + " before checking JOIN message");
-        
+        userName = tmpInfo[1];
         if(ServerMain.clients.size() == 0)
         {
-    
-            userName = tmpInfo[1];
-            ServerMain.clients.add(new Client(tmpInfo[1],socket));
-            //tryToAddUser(incoming);
+            addClientToList(socket);
             output.println("J_OK");
             System.out.println("J_OK sent\nUser " + userName + " joined.");
         }
@@ -175,9 +171,14 @@ public class ClientHandler extends Thread {
                     break;
                 }
             }
-            userName = tmpInfo[1];
-            ServerMain.clients.add(new Client(tmpInfo[1],socket));
+            addClientToList(socket);
             System.out.println("J_OK sent\nUser " + userName + " joined.");
         }
+    }
+    
+    private void addClientToList(Socket socket)
+    {
+        Client tmpClient = new Client(userName,socket,true);
+        ServerMain.clients.add(tmpClient);
     }
 }
