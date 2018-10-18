@@ -41,6 +41,19 @@ public class ServerMain {
         }while(true);
     }
     
+    public static void removeAndUpdateList(String username)
+    {
+        Iterator<Client> clientIterator = clients.iterator();
+        while(clientIterator.hasNext())
+        {
+            Client client = clientIterator.next();
+            if(client.getName().equals(username))
+            {
+                clientIterator.remove();
+            }
+        }
+    }
+    
     /*static ServerSocket serverSocket;
     private static final int port = 1234;
 

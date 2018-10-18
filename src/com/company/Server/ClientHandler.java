@@ -20,6 +20,9 @@ public class ClientHandler extends Thread {
     private Scanner input;
     private PrintWriter output;
     
+    //cache temp user name here to later remove them from list
+    private String userName = "";
+    
     public ClientHandler(Socket socket)
     {
         //set this objects socket to whatever is incoming
@@ -38,40 +41,71 @@ public class ClientHandler extends Thread {
     {
         //string to pass incoming string to from the clien'ts input stream, ie what gets sent to us
         String received;
-        
-        do {
+        try{
+            do {
             //here we do that^
-            received = input.nextLine();
             
-            if(received != null)
-            {
-                switch (splitFirst(received))
+                received = input.nextLine();
+    
+                if(received != null)
                 {
-                    case "JOIN":
-                        System.out.println("received a join message");
-                        try {
-                            checkIfUserJoins(received,clientSocket);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        break;
-                    case "DATA":
-                        String[] tmpInfo = StringUtilities.splitDataProtocol(received);
-                        sendToAllUsers(tmpInfo[2]);
+                    switch (splitFirst(received))
+                    {
+                        case "JOIN":
+                            System.out.println("received a join message");
+                            try {
+                                checkIfUserJoins(received,clientSocket);
+    
+                                sendToAllUsers(showAllClients());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        case "DATA":
+                            //TODO: the list blocks the server some how, maybe it's the return statement
+                            String[] tmpInfo = StringUtilities.splitDataProtocol(received);
+                            if(tmpInfo[2].contains("LIST"))
+                            {
+                                sendToAllUsers(showAllClients());
+                                return;
+                            }else if(tmpInfo[2].contains("QUIT"))
+                            {
+                                System.out.println("user wants to quit, dc'ing them..");
+                                System.out.println("list size before: " + ServerMain.clients.size());
+                                ServerMain.removeAndUpdateList(userName);
+                                System.out.println("list size now: " + ServerMain.clients.size() + " user " + userName +" has been removed.");
+                                sendToAllUsers(showAllClients());
+                                try {
+                                    clientSocket.close();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }else
+                            {
+                                sendToAllUsers(tmpInfo[2]);
+                            }
+                            //TODO: ??
+                            break;
+                    /*case "IMAV":
+                        String[] duoArr = received.split(" ");
+                        System.out.println(duoArr[1] + " is alive");
+                        break;*/
+                    }
         
-                    case "LIST":
-                        output.println(ClientListManager.getInstance().showAllClients());
-                        break;
+                    //this sends the message to all users
+        
                 }
-                
-                //this sends the message to all users
-                
-            }
+            
+            
             //echo msg back to client
             //output.println("ECHO: " + received);
             //repeat untill QUIT is received
-        }while(!received.equals("QUIT"));
-        
+            }while(!received.equals("QUIT"));
+            
+        }catch (NoSuchElementException noele)
+        {
+            System.out.println("Noone's typing");
+        }
         try{
             //its only possible to terminate a connection if the client exists
             if(clientSocket != null)
@@ -83,6 +117,16 @@ public class ClientHandler extends Thread {
         {
             System.out.println("Unable to disconnect");
         }
+    }
+    
+    public String showAllClients()
+    {
+        String tmp = "";
+        for (Client c : ServerMain.clients)
+        {
+            tmp += c.getName() + ", ";
+        }
+        return tmp;
     }
 
     private void sendToAllUsers(String msg)
@@ -102,33 +146,35 @@ public class ClientHandler extends Thread {
         String[] tmpInfo = splitJoinProtocol(incoming);
         System.out.println("name is : " + tmpInfo[1] + " before checking JOIN message");
         
-        if(ClientListManager.getInstance().getSize() == 0)
+        if(ServerMain.clients.size() == 0)
         {
     
+            userName = tmpInfo[1];
             ServerMain.clients.add(new Client(tmpInfo[1],socket));
             //tryToAddUser(incoming);
             output.println("J_OK");
-            System.out.println("J_OK sent");
-            
+            System.out.println("J_OK sent\nUser " + userName + " joined.");
         }
         //if there already are people on the server
-        else if(ClientListManager.getInstance().getSize() > 0)
+        else if(ServerMain.clients.size() > 0)
         {
-            for(int i = 0; i < ClientListManager.getInstance().getSize(); i++)
+            for(int i = 0; i < ServerMain.clients.size(); i++)
             {
                 //get name of clients and check if exists
                 //if user name exists
-                if(ServerMain.clients.get(i).getName().equals(tmpInfo[1]))
+                if(tmpInfo[1].equals(ServerMain.clients.get(i).getName()))
                 {
                     output.println("J_ERR");
-                    return;
+                    System.out.println("JERR SENT");
                 }
                 else {
                     output.println("J_OK");
-                    ServerMain.clients.add(new Client(tmpInfo[1],socket));
+                    break;
                 }
             }
-            
+            userName = tmpInfo[1];
+            ServerMain.clients.add(new Client(tmpInfo[1],socket));
+            System.out.println("J_OK sent\nUser " + userName + " joined.");
         }
     }
     
