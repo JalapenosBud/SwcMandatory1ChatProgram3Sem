@@ -110,6 +110,8 @@ public class ClientHandler extends Thread {
             //its only possible to terminate a connection if the client exists
             if(clientSocket != null)
             {
+                ServerMain.removeAndUpdateList(userName);
+                sendToAllUsers(showAllClients());
                 System.out.println("Closing down connection");
                 clientSocket.close();
             }
