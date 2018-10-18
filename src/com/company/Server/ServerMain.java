@@ -53,38 +53,5 @@ public class ServerMain {
             }
         }
     }
-    
-    /*static ServerSocket serverSocket;
-    private static final int port = 1234;
-
-    public static void main(String[] args) throws IOException {
-
-        try{
-            serverSocket = new ServerSocket(port);
-        }catch(IOException e)
-        {
-            System.out.println("\nunable to set up port");
-            System.exit(1);
-        }
-        
-        do {
-            try{
-                System.out.println("wait for client...");
-                Socket mySocket = serverSocket.accept();
-    
-                System.out.println("\nNew client accepted.\n");
-                Thread handler = new Thread(new ClientHandler(mySocket));
-                handler.start();
-    
-                System.out.println("thread: " + handler.getName() + " is now started");
-            }
-            catch (IOException io)
-            {
-                io.printStackTrace();
-            }
-            
-            
-        }while (true);
-    }*/
 
 }

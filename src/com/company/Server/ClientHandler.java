@@ -43,14 +43,15 @@ public class ClientHandler extends Thread {
         String received;
         try{
             do {
-            //here we do that^
-            
+                //here we do that^
                 received = input.nextLine();
     
                 if(received != null)
                 {
                     switch (splitFirst(received))
                     {
+                        
+                        
                         case "JOIN":
                             System.out.println("received a join message");
                             try {
@@ -68,12 +69,15 @@ public class ClientHandler extends Thread {
                             {
                                 sendToAllUsers(showAllClients());
                                 return;
-                            }else if(tmpInfo[2].contains("QUIT"))
+                            }
+                            else if(tmpInfo[2].contains("QUIT"))
                             {
                                 System.out.println("user wants to quit, dc'ing them..");
                                 System.out.println("list size before: " + ServerMain.clients.size());
                                 ServerMain.removeAndUpdateList(userName);
+                                
                                 System.out.println("list size now: " + ServerMain.clients.size() + " user " + userName +" has been removed.");
+                                
                                 sendToAllUsers(showAllClients());
                                 try {
                                     clientSocket.close();
@@ -84,21 +88,16 @@ public class ClientHandler extends Thread {
                             {
                                 sendToAllUsers(tmpInfo[2]);
                             }
-                            //TODO: ??
                             break;
-                    /*case "IMAV":
-                        String[] duoArr = received.split(" ");
-                        System.out.println(duoArr[1] + " is alive");
-                        break;*/
+    
+                        case "IMAV":
+        
+                            String[] duoArr = received.split(" ");
+                            System.out.println(duoArr[1] + " is alive");
+                            received = "";
+                            break;
                     }
-        
-                    //this sends the message to all users
-        
                 }
-            
-            
-            //echo msg back to client
-            //output.println("ECHO: " + received);
             //repeat untill QUIT is received
             }while(!received.equals("QUIT"));
             

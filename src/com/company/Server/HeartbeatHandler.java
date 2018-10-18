@@ -40,6 +40,7 @@ public class HeartbeatHandler implements Runnable {
                     System.out.println(duoArr[1] + " is alive");
     
                     System.out.println(message);
+                    message = "";
                 }
                 
                 
