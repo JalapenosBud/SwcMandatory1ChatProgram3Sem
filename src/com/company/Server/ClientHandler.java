@@ -66,7 +66,7 @@ public class ClientHandler extends Thread {
                             if(tmpInfo[2].contains("LIST"))
                             {
                                 sendToAllUsers(showAllClients());
-                                return;
+                                break;
                             }
                             else if(tmpInfo[2].contains("QUIT"))
                             {
