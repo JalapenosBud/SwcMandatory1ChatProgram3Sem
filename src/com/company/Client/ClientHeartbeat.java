@@ -18,7 +18,7 @@ public class ClientHeartbeat implements Runnable {
     @Override
     public void run()
     {
-        heartbeatIsAlive(printWriter,5,name);
+        heartbeatIsAlive(printWriter,8,name);
     }
     
     private void heartbeatIsAlive(PrintWriter pw, float timeToCheck, String name)
@@ -37,7 +37,7 @@ public class ClientHeartbeat implements Runnable {
                 //System.out.println("heartbeat");
                 pw.println(Commands.send_IMAV(name));
                 test = System.currentTimeMillis();
-                countingTime = false;
+                //countingTime = false;
             }
         }
     }

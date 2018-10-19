@@ -9,38 +9,37 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class Client{
-
+    
+    private String name;
+    private Socket socket;
+    
+    private boolean amIAlive = false;
+    
+    public Client(){}
+    
+    public Client(String name, Socket socket, boolean amIAlive)
+    {
+        this.name = name;
+        this.socket = socket;
+        this.amIAlive = amIAlive;
+    }
+    
+    public boolean isAmIAlive() {
+        return amIAlive;
+    }
+    
+    public void setAmIAlive(boolean amIAlive) {
+        this.amIAlive = amIAlive;
+    }
+    
     public String getName() {
         return name;
     }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    String name;
     
     public Socket getSocket() {
         return socket;
     }
     
-    public void setSocket(Socket socket) {
-        this.socket = socket;
-    }
-    
-    Socket socket;
-
-    public Client()
-    {
-    }
-
-    public Client(String name, Socket socket)
-    {
-        this.name = name;
-        this.socket = socket;
-        
-    }
-
     @Override
     public String toString() {
         return name;

@@ -13,7 +13,7 @@ import static com.company.Utilities.StringUtilities.inputDataOutputMessage;
 
 public class ClientListen implements Runnable {
     
-    Socket socket;
+    private Socket socket;
     public ClientListen(Socket socket)
     {
         this.socket = socket;
