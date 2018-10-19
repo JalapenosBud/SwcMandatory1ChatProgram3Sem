@@ -1,6 +1,7 @@
 package com.company.Server;
 
 import com.company.Client.Client;
+import com.company.Utilities.ColorCoder;
 import com.company.Utilities.StringUtilities;
 
 import java.io.IOException;
@@ -87,7 +88,9 @@ public class ClientHandler extends Thread {
                                
                             }else
                             {
-                                sendToAllUsers(tmpInfo[2]);
+                                String colorName = ColorCoder.ANSI_RED + tmpInfo[1];
+                                String colorMessage = ColorCoder.ANSI_BLACK + tmpInfo[2];
+                                sendToAllUsers(colorName + ": " + colorMessage);
                             }
                             break;
     

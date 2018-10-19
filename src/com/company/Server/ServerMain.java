@@ -37,11 +37,11 @@ public class ServerMain {
             //and give it the socket, so that when it creates a connection, it has created a socket which it can communicate on and from
             ClientHandler handler = new ClientHandler(client);
             handler.start();
-            if(handler.isAlive())
+            /*if(handler.isAlive())
             {
                 Thread checkusers = new Thread(new CheckOnlineUsers());
                 checkusers.start();
-            }
+            }*/
             
         }while(true);
         
