@@ -54,43 +54,28 @@ public class ClientHandler extends Thread {
     
     public void run()
     {
-        
-        
         try
         {
-            
-                
-                
-                while(!added)
+            while(!added)
+            {
+                String received = input.nextLine();
+                String[] tmpInfo = received.split(" ",2);
+                if (tmpInfo[0].equals("JOIN"))
                 {
-                    String received = input.nextLine();
-                    String[] tmpInfo = received.split(" ",2);
-                    if (tmpInfo[0].equals("JOIN"))
+                    System.out.println("received JOIN");
+                    userName = tmpInfo[1];
+    
+                    System.out.println("name is : " + userName + " before checking JOIN message");
+    
+                    //if there already are people on the server
+                    if(ServerMain.clients.size() > 0)
                     {
-                        System.out.println("received JOIN");
-                        userName = tmpInfo[1];
-        
-                        System.out.println("name is : " + userName + " before checking JOIN message");
-        
-                        //if there already are people on the server
-                        if(ServerMain.clients.size() > 0)
+                        if(contains(ServerMain.clients,userName))
                         {
-                            if(contains(ServerMain.clients,userName))
-                            {
-                                output.println("J_ERR");
-                                added = false;
-                            }
-                            else if(!contains(ServerMain.clients,userName))
-                            {
-                                Client tmpClient = new Client(userName,clientSocket,true);
-                                ServerMain.clients.add(tmpClient);
-                                output.println("J_OK");
-                                System.out.println("J_OK sent\nUser " + userName + " joined.");
-                                added = true;
-                            }
-            
+                            output.println("J_ERR");
+                            added = false;
                         }
-                        else if(ServerMain.clients.size() == 0)
+                        else if(!contains(ServerMain.clients,userName))
                         {
                             Client tmpClient = new Client(userName,clientSocket,true);
                             ServerMain.clients.add(tmpClient);
@@ -98,56 +83,64 @@ public class ClientHandler extends Thread {
                             System.out.println("J_OK sent\nUser " + userName + " joined.");
                             added = true;
                         }
-                    }
-                }
-                while(added)
-                {
-                    String stringInside = input.nextLine();
-                    
-                    String splitOnProtocol = splitFirst(stringInside);
-                    
-                    if (splitOnProtocol.equals("DATA")) {
-                        
-                        System.out.println("received DATA");
-                        
-                        String[] anothertmpInfo = StringUtilities.splitDataProtocol(stringInside);
-                        
-                        if (anothertmpInfo[2].contains("LIST")) {
-                            sendToAllUsers(showAllClients());
-                        }
-                        else if (anothertmpInfo[2].contains("QUIT"))
-                        {
-                            System.out.println("received QUIT");
-                            try {
-                                System.out.println("user wants to quit, dc'ing them..");
-                                System.out.println("list size before: " + ServerMain.clients.size());
-                                ServerMain.removeAndUpdateList(userName);
-                
-                                System.out.println("list size now: " + ServerMain.clients.size() + " user " + userName + " has been removed.");
-                
-                                sendToAllUsers(showAllClients());
-                                clientSocket.close();
-                
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-            
-                        }
-                        else
-                        {
-                            sendToAllUsers(anothertmpInfo[2]);
-                        }
-                    }
-                    if (splitOnProtocol.equals("IMAV"))
-                    {
-                        System.out.println("received IMAV");
         
-                        String[] duoArr = stringInside.split(" ");
-                        System.out.println(duoArr[1] + " is alive");
+                    }
+                    else if(ServerMain.clients.size() == 0)
+                    {
+                        Client tmpClient = new Client(userName,clientSocket,true);
+                        ServerMain.clients.add(tmpClient);
+                        output.println("J_OK");
+                        System.out.println("J_OK sent\nUser " + userName + " joined.");
+                        added = true;
                     }
                 }
+            }
+            while(added)
+            {
+                String stringInside = input.nextLine();
+                
+                String splitOnProtocol = splitFirst(stringInside);
+                
+                if (splitOnProtocol.equals("DATA")) {
+                    
+                    System.out.println("received DATA");
+                    
+                    String[] anothertmpInfo = StringUtilities.splitDataProtocol(stringInside);
+                    
+                    if (anothertmpInfo[2].contains("LIST")) {
+                        sendToAllUsers(showAllClients());
+                    }
+                    else if (anothertmpInfo[2].contains("QUIT"))
+                    {
+                        System.out.println("received QUIT");
+                        try {
+                            System.out.println("user wants to quit, dc'ing them..");
+                            System.out.println("list size before: " + ServerMain.clients.size());
+                            ServerMain.removeAndUpdateList(userName);
             
+                            System.out.println("list size now: " + ServerMain.clients.size() + " user " + userName + " has been removed.");
             
+                            sendToAllUsers(showAllClients());
+                            clientSocket.close();
+            
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+        
+                    }
+                    else
+                    {
+                        sendToAllUsers(anothertmpInfo[2]);
+                    }
+                }
+                if (splitOnProtocol.equals("IMAV"))
+                {
+                    System.out.println("received IMAV");
+    
+                    String[] duoArr = stringInside.split(" ");
+                    System.out.println(duoArr[1] + " is alive");
+                }
+            }
         }
         catch (NoSuchElementException noele)
         {

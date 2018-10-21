@@ -38,6 +38,8 @@ public class ClientMain {
     
     private static void sendMessages()
     {
+        boolean areWeIn = false;
+        
         Socket socket = null;
         try{
             //here we initialize the socket with given host ie up address and port supplied
@@ -63,19 +65,33 @@ public class ClientMain {
                 networkOutput.println(Commands.send_JOIN(message,STRIPTHEFUCKINGSLASHOFFMYIPADDRESS(socket),PORT));
     
                 response = networkInput.nextLine();
+                System.out.println("response from server: " + response);
+                //one liner boolean
                 
-            }while(!response.equals("J_OK") && response.equals("J_ERR"));
+                if(response.equals("J_ERR"))
+                {
+                    areWeIn = false;
+                }
+                else if(response.equals("J_OK"))
+                {
+                    areWeIn = true;
+                }
+                
+            }while(!areWeIn);
     
-            System.out.println("we outside j ok now");
-            
-            //start listener thread
-            Thread clientListener = new Thread(clientListen);
-            clientListener.start();
-            
-            //TODO: heartbeat, ugly implementation lol
-            
-            Thread clientHearbeat = new Thread(new ClientHeartbeat(networkOutput,username));
-            clientHearbeat.start();
+            if(areWeIn)
+            {
+                System.out.println("we outside j ok now");
+    
+                //start listener thread
+                Thread clientListener = new Thread(clientListen);
+                clientListener.start();
+    
+                //TODO: heartbeat, ugly implementation lol
+    
+                Thread clientHearbeat = new Thread(new ClientHeartbeat(networkOutput,username));
+                clientHearbeat.start();
+            }
             
             while (!message.equals("QUIT"))
             {
