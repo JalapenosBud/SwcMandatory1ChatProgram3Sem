@@ -3,6 +3,7 @@ package com.company.Server;
 import com.company.Client.Client;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
@@ -13,7 +14,7 @@ public class ServerMain {
     private static ServerSocket serverSocket;
     private static  final int PORT = 1234;
     
-    public static List<Client> clients = new ArrayList<>();
+    public static ArrayList<Client> clients = new ArrayList<>();
     
     public static void main(String[] args) throws IOException
     {

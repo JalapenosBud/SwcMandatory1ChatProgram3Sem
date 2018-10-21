@@ -6,6 +6,7 @@ import com.company.Utilities.StringUtilities;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -19,6 +20,8 @@ public class ClientHandler extends Thread {
     private Socket clientSocket;
     private Scanner input;
     private PrintWriter output;
+    
+    private boolean added = false;
     
     //cache temp user name here to later remove them from list
     private String userName = "";
@@ -37,77 +40,123 @@ public class ClientHandler extends Thread {
         }
     }
     
+    private boolean contains(ArrayList<Client> thelist, String name)
+    {
+        for (Client notherName : thelist)
+        {
+            if(notherName.getName().equals(name))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     public void run()
     {
-        //string to pass incoming string to from the clien'ts input stream, ie what gets sent to us
-        String received;
-        try{
-            do {
-                //here we do that^
-                received = input.nextLine();
-    
-                if(received != null)
+        
+        
+        try
+        {
+            
+                
+                
+                while(!added)
                 {
-                    switch (splitFirst(received))
+                    String received = input.nextLine();
+                    String[] tmpInfo = received.split(" ",2);
+                    if (tmpInfo[0].equals("JOIN"))
                     {
-                        case "JOIN":
-                            System.out.println("received a join message");
+                        System.out.println("received JOIN");
+                        userName = tmpInfo[1];
+        
+                        System.out.println("name is : " + userName + " before checking JOIN message");
+        
+                        //if there already are people on the server
+                        if(ServerMain.clients.size() > 0)
+                        {
+                            if(contains(ServerMain.clients,userName))
+                            {
+                                output.println("J_ERR");
+                                added = false;
+                            }
+                            else if(!contains(ServerMain.clients,userName))
+                            {
+                                Client tmpClient = new Client(userName,clientSocket,true);
+                                ServerMain.clients.add(tmpClient);
+                                output.println("J_OK");
+                                System.out.println("J_OK sent\nUser " + userName + " joined.");
+                                added = true;
+                            }
+            
+                        }
+                        else if(ServerMain.clients.size() == 0)
+                        {
+                            Client tmpClient = new Client(userName,clientSocket,true);
+                            ServerMain.clients.add(tmpClient);
+                            output.println("J_OK");
+                            System.out.println("J_OK sent\nUser " + userName + " joined.");
+                            added = true;
+                        }
+                    }
+                }
+                while(added)
+                {
+                    String stringInside = input.nextLine();
+                    
+                    String splitOnProtocol = splitFirst(stringInside);
+                    
+                    if (splitOnProtocol.equals("DATA")) {
+                        
+                        System.out.println("received DATA");
+                        
+                        String[] anothertmpInfo = StringUtilities.splitDataProtocol(stringInside);
+                        
+                        if (anothertmpInfo[2].contains("LIST")) {
+                            sendToAllUsers(showAllClients());
+                        }
+                        else if (anothertmpInfo[2].contains("QUIT"))
+                        {
+                            System.out.println("received QUIT");
                             try {
-                                checkIfUserJoins(received,clientSocket);
-    
+                                System.out.println("user wants to quit, dc'ing them..");
+                                System.out.println("list size before: " + ServerMain.clients.size());
+                                ServerMain.removeAndUpdateList(userName);
+                
+                                System.out.println("list size now: " + ServerMain.clients.size() + " user " + userName + " has been removed.");
+                
                                 sendToAllUsers(showAllClients());
+                                clientSocket.close();
+                
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                            break;
-                        case "DATA":
-                            String[] tmpInfo = StringUtilities.splitDataProtocol(received);
-                            if(tmpInfo[2].contains("LIST"))
-                            {
-                                sendToAllUsers(showAllClients());
-                                break;
-                            }
-                            else if(tmpInfo[2].contains("QUIT"))
-                            {
-                                
-                                try {
-                                    System.out.println("user wants to quit, dc'ing them..");
-                                    System.out.println("list size before: " + ServerMain.clients.size());
-                                    ServerMain.removeAndUpdateList(userName);
-    
-                                    System.out.println("list size now: " + ServerMain.clients.size() + " user " + userName +" has been removed.");
-    
-                                    sendToAllUsers(showAllClients());
-                                    clientSocket.close();
-                                    break;
-                                    
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                               
-                            }else
-                            {
-                                sendToAllUsers(tmpInfo[2]);
-                            }
-                            break;
-    
-                        case "IMAV":
+            
+                        }
+                        else
+                        {
+                            sendToAllUsers(anothertmpInfo[2]);
+                        }
+                    }
+                    if (splitOnProtocol.equals("IMAV"))
+                    {
+                        System.out.println("received IMAV");
         
-                            String[] duoArr = received.split(" ");
-                            System.out.println(duoArr[1] + " is alive");
-                            //received = "";
-                            break;
+                        String[] duoArr = stringInside.split(" ");
+                        System.out.println(duoArr[1] + " is alive");
                     }
                 }
-            //repeat untill QUIT is received
-            }while(!received.equals("QUIT"));
             
-        }catch (NoSuchElementException noele)
+            
+        }
+        catch (NoSuchElementException noele)
         {
             System.out.println("Noone's typing");
         }
-        try{
-            //its only possible to terminate a connection if the client exists
+    
+        /*try
+        {
+        //its only possible to terminate a connection if the client exists
             if(clientSocket != null)
             {
                 ServerMain.removeAndUpdateList(userName);
@@ -115,10 +164,11 @@ public class ClientHandler extends Thread {
                 System.out.println("Closing down connection");
                 clientSocket.close();
             }
-        }catch (IOException ioex)
+        }
+        catch (IOException ioex)
         {
             System.out.println("Unable to disconnect");
-        }
+        }*/
     }
     
     public String showAllClients()
@@ -142,43 +192,5 @@ public class ClientHandler extends Thread {
                 e.printStackTrace();
             }
         }
-    }
-    
-    private void checkIfUserJoins(String incoming, Socket socket) throws IOException {
-        String[] tmpInfo = splitJoinProtocol(incoming);
-        System.out.println("name is : " + tmpInfo[1] + " before checking JOIN message");
-        userName = tmpInfo[1];
-        if(ServerMain.clients.size() == 0)
-        {
-            addClientToList(socket);
-            output.println("J_OK");
-            System.out.println("J_OK sent\nUser " + userName + " joined.");
-        }
-        //if there already are people on the server
-        else if(ServerMain.clients.size() > 0)
-        {
-            for(int i = 0; i < ServerMain.clients.size(); i++)
-            {
-                //get name of clients and check if exists
-                //if user name exists
-                if(tmpInfo[1].equals(ServerMain.clients.get(i).getName()))
-                {
-                    output.println("J_ERR");
-                    System.out.println("JERR SENT");
-                }
-                else {
-                    output.println("J_OK");
-                    break;
-                }
-            }
-            addClientToList(socket);
-            System.out.println("J_OK sent\nUser " + userName + " joined.");
-        }
-    }
-    
-    private void addClientToList(Socket socket)
-    {
-        Client tmpClient = new Client(userName,socket,true);
-        ServerMain.clients.add(tmpClient);
     }
 }
