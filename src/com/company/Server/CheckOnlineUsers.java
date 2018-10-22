@@ -1,7 +1,6 @@
 package com.company.Server;
 
 import com.company.Client.Client;
-import com.company.Utilities.Commands;
 
 public class CheckOnlineUsers implements Runnable
 {
@@ -25,7 +24,7 @@ public class CheckOnlineUsers implements Runnable
                 
                 //TODO: im tired... this isnt what it should do..
                 //TODO:.. it should calculate time and time stamps, not just check a boolean that is never flipped.. goodnight
-                for (Client c : ServerMain.clients)
+                for (Client c : ServerMain.clientArrayList)
                 {
                     if(!c.isAmIAlive())
                     {
@@ -40,7 +39,7 @@ public class CheckOnlineUsers implements Runnable
                 if(removethisniggpls)
                 {
                     System.out.println("removing " + clientToRemove);
-                    ServerMain.removeAndUpdateList(clientToRemove);
+                    ServerMain.removeClientAndUpdateClientList(clientToRemove);
                     removethisniggpls = false;
                 }
                 
