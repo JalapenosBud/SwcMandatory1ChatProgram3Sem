@@ -1,6 +1,7 @@
 package com.company.Server;
 
 import com.company.Client.Client;
+import com.company.Utilities.ColorCoder;
 import com.company.Utilities.StringUtilities;
 
 import java.io.IOException;
@@ -10,7 +11,9 @@ import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-import static com.company.Utilities.StringUtilities.splitOnFirstArrayElement;
+import static com.company.Utilities.StringUtilities.splitAndClean_DATA_ProtocolFromSymbols;
+import static com.company.Utilities.StringUtilities.splitAndClean_JOIN_protocolFromSymbols;
+import static com.company.Utilities.StringUtilities.splitAndReturnOnlyProtocolMsg;
 
 public class ClientHandler extends Thread
 {
@@ -50,7 +53,7 @@ public class ClientHandler extends Thread
                 if (tmpInfo[0].equals("JOIN"))
                 {
                     System.out.println("received JOIN");
-                    userName = tmpInfo[1];
+                    userName = splitAndClean_JOIN_protocolFromSymbols(messageFromClient)[1];
                     
                     System.out.println("name is : " + userName + " before checking JOIN message");
                     Client tempClient = new Client(userName, clientSocket, true);
@@ -78,24 +81,28 @@ public class ClientHandler extends Thread
             {
                 String receivedMessageFromClient = input.nextLine();
                 
-                String splitOnDataAndImavProtocol = splitOnFirstArrayElement(receivedMessageFromClient);
+                String splitOnDataAndImavProtocol = splitAndReturnOnlyProtocolMsg(receivedMessageFromClient);
                 
                 if (splitOnDataAndImavProtocol.equals("DATA"))
                 {
                     System.out.println("received DATA");
-                    String[] anothertmpInfo = StringUtilities.splitDataProtocol(receivedMessageFromClient);
+                    String[] theSplitMessageFromDataProtocol = StringUtilities.splitAndClean_DATA_ProtocolFromSymbols(receivedMessageFromClient);
                     
-                    if (anothertmpInfo[2].contains("LIST"))
+                    userName = theSplitMessageFromDataProtocol[1];
+                    
+                    if (theSplitMessageFromDataProtocol[2].contains("LIST"))
                     {
                         sendToAllUsers(printListOfActiveUsersToClient());
                     }
-                    else if (anothertmpInfo[2].contains("QUIT"))
+                    else if (theSplitMessageFromDataProtocol[2].contains("QUIT"))
                     {
                         System.out.println("received QUIT");
                         try
                         {
                             ServerMain.removeClientAndUpdateClientList(userName);
+                            
                             sendToAllUsers(printListOfActiveUsersToClient());
+                            
                             clientSocket.close();
                             
                         }
@@ -107,7 +114,7 @@ public class ClientHandler extends Thread
                     }
                     else
                     {
-                        sendToAllUsers(anothertmpInfo[2]);
+                        sendToAllUsers(ColorCoder.ANSI_BLUE + userName + " " + theSplitMessageFromDataProtocol[2]);
                     }
                 }
                 if (splitOnDataAndImavProtocol.equals("IMAV"))
@@ -173,8 +180,7 @@ public class ClientHandler extends Thread
     
     private void sendToAllUsers(String msg)
     {
-        for (Client s :
-                ServerMain.clientArrayList)
+        for (Client s : ServerMain.clientArrayList)
         {
             try
             {
