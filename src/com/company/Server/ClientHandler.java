@@ -10,10 +10,7 @@ import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-import static com.company.Utilities.ClientUtilities.returnNewClient;
-import static com.company.Utilities.StringUtilities.inputDataOutputMessage;
-import static com.company.Utilities.StringUtilities.splitFirst;
-import static com.company.Utilities.StringUtilities.splitJoinProtocol;
+import static com.company.Utilities.StringUtilities.splitOnFirstArrayElement;
 
 public class ClientHandler extends Thread {
     
@@ -21,7 +18,7 @@ public class ClientHandler extends Thread {
     private Scanner input;
     private PrintWriter output;
     
-    private boolean added = false;
+    private boolean addedToClientList = false;
     
     //cache temp user name here to later remove them from list
     private String userName = "";
@@ -40,7 +37,7 @@ public class ClientHandler extends Thread {
         }
     }
     
-    private boolean contains(ArrayList<Client> thelist, String name)
+    private boolean doesUserExistInClientList(ArrayList<Client> thelist, String name)
     {
         for (Client notherName : thelist)
         {
@@ -56,7 +53,7 @@ public class ClientHandler extends Thread {
     {
         try
         {
-            while(!added)
+            while(!addedToClientList)
             {
                 String received = input.nextLine();
                 String[] tmpInfo = received.split(" ",2);
@@ -70,18 +67,18 @@ public class ClientHandler extends Thread {
                     //if there already are people on the server
                     if(ServerMain.clients.size() > 0)
                     {
-                        if(contains(ServerMain.clients,userName))
+                        if(doesUserExistInClientList(ServerMain.clients,userName))
                         {
                             output.println("J_ERR");
-                            added = false;
+                            addedToClientList = false;
                         }
-                        else if(!contains(ServerMain.clients,userName))
+                        else if(!doesUserExistInClientList(ServerMain.clients,userName))
                         {
                             Client tmpClient = new Client(userName,clientSocket,true);
                             ServerMain.clients.add(tmpClient);
                             output.println("J_OK");
                             System.out.println("J_OK sent\nUser " + userName + " joined.");
-                            added = true;
+                            addedToClientList = true;
                         }
         
                     }
@@ -91,24 +88,24 @@ public class ClientHandler extends Thread {
                         ServerMain.clients.add(tmpClient);
                         output.println("J_OK");
                         System.out.println("J_OK sent\nUser " + userName + " joined.");
-                        added = true;
+                        addedToClientList = true;
                     }
                 }
             }
-            while(added)
+            while(addedToClientList)
             {
-                String stringInside = input.nextLine();
+                String receivedMessageFromClient = input.nextLine();
                 
-                String splitOnProtocol = splitFirst(stringInside);
+                String splitOnDataAndImavProtocol = splitOnFirstArrayElement(receivedMessageFromClient);
                 
-                if (splitOnProtocol.equals("DATA")) {
+                if (splitOnDataAndImavProtocol.equals("DATA")) {
                     
                     System.out.println("received DATA");
                     
-                    String[] anothertmpInfo = StringUtilities.splitDataProtocol(stringInside);
+                    String[] anothertmpInfo = StringUtilities.splitDataProtocol(receivedMessageFromClient);
                     
                     if (anothertmpInfo[2].contains("LIST")) {
-                        sendToAllUsers(showAllClients());
+                        sendToAllUsers(printListOfActiveUsersToClient());
                     }
                     else if (anothertmpInfo[2].contains("QUIT"))
                     {
@@ -120,7 +117,7 @@ public class ClientHandler extends Thread {
             
                             System.out.println("list size now: " + ServerMain.clients.size() + " user " + userName + " has been removed.");
             
-                            sendToAllUsers(showAllClients());
+                            sendToAllUsers(printListOfActiveUsersToClient());
                             clientSocket.close();
             
                         } catch (IOException e) {
@@ -133,11 +130,11 @@ public class ClientHandler extends Thread {
                         sendToAllUsers(anothertmpInfo[2]);
                     }
                 }
-                if (splitOnProtocol.equals("IMAV"))
+                if (splitOnDataAndImavProtocol.equals("IMAV"))
                 {
                     System.out.println("received IMAV");
     
-                    String[] duoArr = stringInside.split(" ");
+                    String[] duoArr = receivedMessageFromClient.split(" ");
                     System.out.println(duoArr[1] + " is alive");
                 }
             }
@@ -153,7 +150,7 @@ public class ClientHandler extends Thread {
             if(clientSocket != null)
             {
                 ServerMain.removeAndUpdateList(userName);
-                sendToAllUsers(showAllClients());
+                sendToAllUsers(printListOfActiveUsersToClient());
                 System.out.println("Closing down connection");
                 clientSocket.close();
             }
@@ -164,7 +161,7 @@ public class ClientHandler extends Thread {
         }*/
     }
     
-    public String showAllClients()
+    public String printListOfActiveUsersToClient()
     {
         String tmp = "";
         for (Client c : ServerMain.clients)

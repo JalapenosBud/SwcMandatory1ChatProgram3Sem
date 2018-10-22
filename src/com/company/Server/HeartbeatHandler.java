@@ -5,7 +5,7 @@ import java.net.Socket;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-import static com.company.Utilities.StringUtilities.splitFirst;
+import static com.company.Utilities.StringUtilities.splitOnFirstArrayElement;
 
 public class HeartbeatHandler implements Runnable {
     
@@ -34,7 +34,7 @@ public class HeartbeatHandler implements Runnable {
         {
             try{
                 message = input.nextLine();
-                if(splitFirst(message).equals("IMAV"))
+                if(splitOnFirstArrayElement(message).equals("IMAV"))
                 {
                     String[] duoArr = message.split(" ");
                     System.out.println(duoArr[1] + " is alive");
