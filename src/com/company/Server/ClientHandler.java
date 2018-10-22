@@ -14,6 +14,7 @@ import java.util.Scanner;
 import static com.company.Utilities.StringUtilities.splitAndClean_DATA_ProtocolFromSymbols;
 import static com.company.Utilities.StringUtilities.splitAndClean_JOIN_protocolFromSymbols;
 import static com.company.Utilities.StringUtilities.splitAndReturnOnlyProtocolMsg;
+import static com.company.Utilities.StringsForProtocols.*;
 
 public class ClientHandler extends Thread
 {
@@ -50,30 +51,31 @@ public class ClientHandler extends Thread
             {
                 String messageFromClient = input.nextLine();
                 String[] tmpInfo = messageFromClient.split(" ", 2);
-                if (tmpInfo[0].equals("JOIN"))
+                if (tmpInfo[0].equals(JOIN))
                 {
-                    System.out.println("received JOIN");
+                    System.out.println("received: " + tmpInfo[0] + " from: " + tmpInfo[1]);
                     userName = splitAndClean_JOIN_protocolFromSymbols(messageFromClient)[1];
                     
-                    System.out.println("name is : " + userName + " before checking JOIN message");
                     Client tempClient = new Client(userName, clientSocket, true);
                     
                     if (ServerMain.clientArrayList.size() > 0)
                     {
                         if (doesUserExistInClientList(ServerMain.clientArrayList, userName))
                         {
-                            output.println("J_ERR");
+                            output.println(J_ERR);
                             addedClientToClientList = false;
                         }
                         else if (!doesUserExistInClientList(ServerMain.clientArrayList, userName))
                         {
                             addNewClientToClientList(tempClient);
+                            printListOfActiveUsersToClient(USER_JOINED);
                         }
                         
                     }
                     else if (ServerMain.clientArrayList.size() == 0)
                     {
                         addNewClientToClientList(tempClient);
+                        printListOfActiveUsersToClient(USER_JOINED);
                     }
                 }
             }
@@ -83,25 +85,25 @@ public class ClientHandler extends Thread
                 
                 String splitOnDataAndImavProtocol = splitAndReturnOnlyProtocolMsg(receivedMessageFromClient);
                 
-                if (splitOnDataAndImavProtocol.equals("DATA"))
+                if (splitOnDataAndImavProtocol.equals(DATA))
                 {
                     System.out.println("received DATA");
                     String[] theSplitMessageFromDataProtocol = StringUtilities.splitAndClean_DATA_ProtocolFromSymbols(receivedMessageFromClient);
                     
                     userName = theSplitMessageFromDataProtocol[1];
                     
-                    if (theSplitMessageFromDataProtocol[2].contains("LIST"))
+                    if (theSplitMessageFromDataProtocol[2].contains(LIST))
                     {
-                        sendToAllUsers(printListOfActiveUsersToClient());
+                        printListOfActiveUsersToClient(USERS_ONLINE);
                     }
-                    else if (theSplitMessageFromDataProtocol[2].contains("QUIT"))
+                    else if (theSplitMessageFromDataProtocol[2].contains(QUIT))
                     {
                         System.out.println("received QUIT");
                         try
                         {
                             ServerMain.removeClientAndUpdateClientList(userName);
                             
-                            sendToAllUsers(printListOfActiveUsersToClient());
+                            printListOfActiveUsersToClient(USER_LEFT);
                             
                             clientSocket.close();
                             
@@ -110,17 +112,14 @@ public class ClientHandler extends Thread
                         {
                             e.printStackTrace();
                         }
-                        
                     }
                     else
                     {
-                        sendToAllUsers(ColorCoder.ANSI_BLUE + userName + " " + theSplitMessageFromDataProtocol[2]);
+                        sendToAllUsers(ColorCoder.ANSI_BLUE + userName + "> " + ColorCoder.ANSI_BLACK + theSplitMessageFromDataProtocol[2],userName);
                     }
                 }
-                if (splitOnDataAndImavProtocol.equals("IMAV"))
+                if (splitOnDataAndImavProtocol.equals(IMAV))
                 {
-                    System.out.println("received IMAV");
-                    
                     String[] duoArr = receivedMessageFromClient.split(" ");
                     System.out.println(duoArr[1] + " is alive");
                 }
@@ -163,34 +162,55 @@ public class ClientHandler extends Thread
     private void addNewClientToClientList(Client tempClient)
     {
         ServerMain.clientArrayList.add(tempClient);
-        output.println("J_OK");
+        output.println(J_OK);
         System.out.println("J_OK sent\nUser " + userName + " joined.");
         addedClientToClientList = true;
     }
     
-    private String printListOfActiveUsersToClient()
+    private void printListOfActiveUsersToClient(String eventMessage)
     {
         String tmp = "";
+        
         for (Client c : ServerMain.clientArrayList)
         {
             tmp += c.getName() + ", ";
         }
-        return tmp;
-    }
-    
-    private void sendToAllUsers(String msg)
-    {
-        for (Client s : ServerMain.clientArrayList)
+        
+        for (Client c : ServerMain.clientArrayList)
         {
             try
             {
-                output = new PrintWriter(s.getSocket().getOutputStream(), true);
-                output.println(msg);
+                output = new PrintWriter(c.getSocket().getOutputStream(),true);
+                output.println(ColorCoder.ANSI_BLACK + eventMessage + ColorCoder.ANSI_PURPLE + "Now online: " + ColorCoder.ANSI_RED + tmp);
             }
             catch (IOException e)
             {
                 e.printStackTrace();
             }
+        }
+        
+    }
+    
+    private void sendToAllUsers(String msg, String thisClientUsername)
+    {
+        for (Client c : ServerMain.clientArrayList)
+        {
+            if(!c.getName().equals(thisClientUsername))
+            {
+                try
+                {
+                    output = new PrintWriter(c.getSocket().getOutputStream(), true);
+        
+                    output.println(msg);
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+            
+            
+           
         }
     }
 }

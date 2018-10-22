@@ -2,8 +2,6 @@ package com.company.Client;
 
 import com.company.Utilities.ColorCoder;
 import com.company.Utilities.Commands;
-import com.company.Utilities.StringUtilities;
-import com.sun.deploy.util.StringUtils;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,10 +9,11 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
-import java.util.regex.Pattern;
 
 import static com.company.Utilities.StringUtilities.STRIPTHEFUCKINGSLASHOFFMYIPADDRESS;
-import static com.company.Utilities.StringUtilities.splitDataProtocol;
+import static com.company.Utilities.StringsForProtocols.J_ERR;
+import static com.company.Utilities.StringsForProtocols.J_OK;
+import static com.company.Utilities.StringsForProtocols.QUIT;
 
 public class ClientMain {
     
@@ -56,23 +55,19 @@ public class ClientMain {
             String message, response;
             do {
                 System.out.println("Enter your username: ");
-                //System.out.println("enter message ('QUIT' to exit): ");
-                //here we set the message string to the scanner object's nextline method
-                //so it just reads whatever gets pressed on the keyboard
                 message = userEntry.nextLine();
                 username = message;
-                //here we use the printwriter supplied with the socket's output stream to send the message over the network
                 networkOutput.println(Commands.send_JOIN(message,STRIPTHEFUCKINGSLASHOFFMYIPADDRESS(socket),PORT));
     
                 response = networkInput.nextLine();
-                System.out.println("response from server: " + response);
                 //one liner boolean
                 
-                if(response.equals("J_ERR"))
+                if(response.equals(J_ERR))
                 {
+                    System.out.println("Username taken.");
                     areWeIn = false;
                 }
-                else if(response.equals("J_OK"))
+                else if(response.equals(J_OK))
                 {
                     areWeIn = true;
                 }
@@ -81,20 +76,17 @@ public class ClientMain {
     
             if(areWeIn)
             {
-                System.out.println("we outside j ok now");
-    
                 //start listener thread
                 Thread clientListener = new Thread(clientListen);
                 clientListener.start();
-    
-                //TODO: heartbeat, ugly implementation lol
     
                 Thread clientHearbeat = new Thread(new ClientHeartbeat(networkOutput,username));
                 clientHearbeat.start();
             }
             
-            while (!message.equals("QUIT"))
+            while (!message.equals(QUIT))
             {
+                System.out.println(ColorCoder.ANSI_BLACK + "You> ");
                 message = userEntry.nextLine();
                 networkOutput.println(Commands.send_DATA(username,message));
             }
