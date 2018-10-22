@@ -1,33 +1,38 @@
 package com.company.Utilities;
-import com.company.Utilities.StringUtilities;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
 
-import static com.company.Utilities.StringUtilities.splitDataProtocol;
-
-public class TestClass {
+public class TestClass
+{
     
     public static void main(String[] args)
     {
+        String[] tmp = StringUtilities.splitAndClean_DATA_ProtocolFromSymbols(Commands.send_JOIN("bob","127.0.0.1",1234));
+    
+        for (String tt : tmp)
+        {
+            System.out.println(tt);
+        }
+        
+        
+        
+        
+        /*
         ArrayList<String> array = new ArrayList<>();
         array.add("hans");
         array.add("peter");
         array.add("bob");
         
         
-        
         Scanner input = new Scanner(System.in);
         boolean added = false;
         
-        while(!added)
+        while (!added)
         {
             System.out.println("type to add a user");
             String myinput = input.nextLine();
             
-            if(contains(array,myinput))
+            if (contains(array, myinput))
             {
                 System.out.println(myinput + " does exist");
                 added = false;
@@ -42,14 +47,14 @@ public class TestClass {
                 added = true;
             }
             
-        }
+        }*/
     }
     
     static boolean contains(ArrayList<String> thelist, String name)
     {
         for (String notherName : thelist)
         {
-            if(notherName.equals(name))
+            if (notherName.equals(name))
             {
                 return true;
             }
@@ -84,7 +89,7 @@ public class TestClass {
         {
             System.out.println("less than 0");
         }*/
-        //men hvis den første case er falsk, så kører den alt der er inde i else hvis de matcher
+    //men hvis den første case er falsk, så kører den alt der er inde i else hvis de matcher
         /*else if( myNum >= 3){
             System.out.println("greater than or equal to 3");
             //her kører kun det første if statement, selvom i teorien, så er 3 også større end 0
@@ -100,11 +105,10 @@ public class TestClass {
                 System.out.println("just else");
             }
         }*/
-        
-        
-        
-        //PROTOCOL: DATA <<user_name>>: <<free text…>>
-       /*String[] tmpArr = splitDataProtocol("DATA <<bob>>:<<Hello mr i am se looter>>");
+    
+    
+    //PROTOCOL: DATA <<user_name>>: <<free text…>>
+       /*String[] tmpArr = splitAndClean_DATA_ProtocolFromSymbols("DATA <<bob>>:<<Hello mr i am se looter>>");
        
        for (String str : tmpArr)
        {
@@ -115,13 +119,15 @@ public class TestClass {
     public static void ifElseMystery(int x, int y)
     {
         int z = 4;
-        if(z <= x )
+        if (z <= x)
         {
-            z = x +1;
-        }else {
+            z = x + 1;
+        }
+        else
+        {
             z = z + 9;
         }
-        if(z <= y)
+        if (z <= y)
         {
             y++;
         }
@@ -141,23 +147,23 @@ public class TestClass {
     
                 if(received != null)
                 {
-                    switch (splitFirst(received))
+                    switch (splitAndReturnOnlyProtocolMsg(received))
                     {
                         case "JOIN":
                             System.out.println("received a join message");
                             try {
                                 checkIfUserJoins(received,clientSocket);
     
-                                sendToAllUsers(showAllClients());
+                                sendToAllUsers(printListOfActiveUsersToClient());
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
                             break;
                         case "DATA":
-                            String[] tmpInfo = StringUtilities.splitDataProtocol(received);
+                            String[] tmpInfo = StringUtilities.splitAndClean_DATA_ProtocolFromSymbols(received);
                             if(tmpInfo[2].contains("LIST"))
                             {
-                                sendToAllUsers(showAllClients());
+                                sendToAllUsers(printListOfActiveUsersToClient());
                                 break;
                             }
                             else if(tmpInfo[2].contains("QUIT"))
@@ -165,12 +171,12 @@ public class TestClass {
                                 
                                 try {
                                     System.out.println("user wants to quit, dc'ing them..");
-                                    System.out.println("list size before: " + ServerMain.clients.size());
-                                    ServerMain.removeAndUpdateList(userName);
+                                    System.out.println("list size before: " + ServerMain.clientArrayList.size());
+                                    ServerMain.removeClientAndUpdateClientList(userName);
     
-                                    System.out.println("list size now: " + ServerMain.clients.size() + " user " + userName +" has been removed.");
+                                    System.out.println("list size now: " + ServerMain.clientArrayList.size() + " user " + userName +" has been removed.");
     
-                                    sendToAllUsers(showAllClients());
+                                    sendToAllUsers(printListOfActiveUsersToClient());
                                     clientSocket.close();
                                     break;
                                     
@@ -203,8 +209,8 @@ public class TestClass {
             //its only possible to terminate a connection if the client exists
             if(clientSocket != null)
             {
-                ServerMain.removeAndUpdateList(userName);
-                sendToAllUsers(showAllClients());
+                ServerMain.removeClientAndUpdateClientList(userName);
+                sendToAllUsers(printListOfActiveUsersToClient());
                 System.out.println("Closing down connection");
                 clientSocket.close();
             }
