@@ -7,16 +7,17 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClientListManager {
-
+public class ClientListManager
+{
+    
     //TODO: look into making this completely thread safe..
     private static ClientListManager instance = null;
-
+    
     private List<Client> clients = new ArrayList<>();
-
+    
     public static ClientListManager getInstance()
     {
-        if(instance == null)
+        if (instance == null)
         {
             instance = new ClientListManager();
         }
@@ -27,10 +28,13 @@ public class ClientListManager {
     {
         PrintWriter pw;
         
-        if(clients.size() <= 1)
+        if (clients.size() <= 1)
+        {
             return;
+        }
         
-        try {
+        try
+        {
             for (Client c : clients)
             {
                 //TODO: this throws nullpointer exception, are sockets null?
@@ -38,7 +42,9 @@ public class ClientListManager {
                 pw.println(c.getName() + ": " + message);
                 System.out.println("sending to: " + c.getName() + " listening on: " + c.getSocket());
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             e.printStackTrace();
         }
         
@@ -58,20 +64,20 @@ public class ClientListManager {
         }
         return tmp;
     }
-
+    
     public void addToList(Client client)
     {
         clients.add(client);
     }
-
+    
     public int getSize()
     {
         return clients.size();
     }
-
+    
     public Client getClient(int i)
     {
         return clients.get(i);
     }
-
+    
 }

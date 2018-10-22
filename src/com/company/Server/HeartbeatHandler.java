@@ -7,38 +7,45 @@ import java.util.Scanner;
 
 import static com.company.Utilities.StringUtilities.splitOnFirstArrayElement;
 
-public class HeartbeatHandler implements Runnable {
+public class HeartbeatHandler implements Runnable
+{
     
     Socket socket;
+    
     public HeartbeatHandler(Socket socket)
     {
         this.socket = socket;
     }
     
     @Override
-    public void run() {
+    public void run()
+    {
         
         String message = "";
         Scanner input = null;
         
-        try {
+        try
+        {
             input = new Scanner(socket.getInputStream());
             
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             e.printStackTrace();
         }
         
         //TODO: need to research why this doesnt work.. something about not receiving properly??????
         
-        while(!message.contains("QUIT"))
+        while (!message.contains("QUIT"))
         {
-            try{
+            try
+            {
                 message = input.nextLine();
-                if(splitOnFirstArrayElement(message).equals("IMAV"))
+                if (splitOnFirstArrayElement(message).equals("IMAV"))
                 {
                     String[] duoArr = message.split(" ");
                     System.out.println(duoArr[1] + " is alive");
-    
+                    
                     System.out.println(message);
                     message = "";
                 }

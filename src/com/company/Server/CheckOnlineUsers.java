@@ -6,19 +6,20 @@ public class CheckOnlineUsers implements Runnable
 {
     
     @Override
-    public void run() {
-    
+    public void run()
+    {
+        
         boolean countingTime = true;
         //tager tiden nu
         long test = System.currentTimeMillis();
         
         boolean removethisniggpls = false;
-    
-        while(countingTime)
+        
+        while (countingTime)
         {
             //hvis det tidspunkt nu minus der hvor vi startede er større end 2 sek
             //print out
-            if(System.currentTimeMillis() - test > 10 * 1000)
+            if (System.currentTimeMillis() - test > 10 * 1000)
             {
                 String clientToRemove = "";
                 
@@ -26,7 +27,7 @@ public class CheckOnlineUsers implements Runnable
                 //TODO:.. it should calculate time and time stamps, not just check a boolean that is never flipped.. goodnight
                 for (Client c : ServerMain.clientArrayList)
                 {
-                    if(!c.isAmIAlive())
+                    if (!c.isAmIAlive())
                     {
                         clientToRemove = c.getName();
                         removethisniggpls = true;
@@ -36,7 +37,7 @@ public class CheckOnlineUsers implements Runnable
                         System.out.println(c.getName() + " is alive FROM CHECKONLINEUSERS CLASS");
                     }
                 }
-                if(removethisniggpls)
+                if (removethisniggpls)
                 {
                     System.out.println("removing " + clientToRemove);
                     ServerMain.removeClientAndUpdateClientList(clientToRemove);
