@@ -1,19 +1,16 @@
 package com.company.Utilities;
-import com.company.Utilities.StringUtilities;
 
-import static com.company.Utilities.StringUtilities.splitDataProtocol;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 
 public class TestClass {
     
     public static void main(String[] args)
     {
-        //PROTOCOL: DATA <<user_name>>: <<free text…>>
-       String[] tmpArr = splitDataProtocol("DATA <<bob>>:<<Hello mr i am se looter>>");
-       
-       for (String str : tmpArr)
-       {
-           System.out.println(str);
-       }
+        Pattern p = Pattern.compile(":");
+        Matcher matcher = p.matcher("hehe:hehe");
+        boolean b = matcher.matches();
     }
     
 }

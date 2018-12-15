@@ -1,15 +1,9 @@
 package com.company.Client;
 
-import com.company.Server.ClientListManager;
-
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.Socket;
-import java.nio.channels.SocketChannel;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
-
-import static com.company.Utilities.StringUtilities.inputDataOutputMessage;
 
 public class ClientListen implements Runnable {
     

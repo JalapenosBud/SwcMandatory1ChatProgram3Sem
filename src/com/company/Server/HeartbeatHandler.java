@@ -5,11 +5,13 @@ import java.net.Socket;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-import static com.company.Utilities.StringUtilities.splitFirst;
-
 public class HeartbeatHandler implements Runnable {
+    @Override
+    public void run() {
+
+    }
     
-    Socket socket;
+    /*Socket socket;
     public HeartbeatHandler(Socket socket)
     {
         this.socket = socket;
@@ -50,5 +52,5 @@ public class HeartbeatHandler implements Runnable {
                 System.exit(1);
             }
         }
-    }
+    }*/
 }

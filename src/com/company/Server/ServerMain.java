@@ -19,28 +19,20 @@ public class ServerMain {
     {
         try
         {
-            //create new server on this port
             serverSocket = new ServerSocket(PORT);
-            
         }
         catch (IOException ioex)
         {
             System.out.println("\nUnable to set up port!");
             System.exit(1);
         }
-        do
-            {
-
+        do {
             Socket client = serverSocket.accept();
-            
             System.out.println("\nNew client accepted.\n");
-
             ClientHandler handler = new ClientHandler(client);
             handler.start();
             
         }while(true);
-        
-        
     }
     
     public static void removeAndUpdateList(String username)
@@ -55,11 +47,6 @@ public class ServerMain {
                 clientIterator.remove();
             }
         }
-    }
-    
-    private static void checkusersonline()
-    {
-    
     }
 
 }
