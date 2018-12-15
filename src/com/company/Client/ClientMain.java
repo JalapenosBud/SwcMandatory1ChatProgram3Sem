@@ -44,6 +44,7 @@ public class ClientMain {
             ClientListen clientListen = new ClientListen(socket);
             
             String message, response;
+
             do {
                 System.out.println("Enter your username: ");
                 message = userEntry.nextLine();

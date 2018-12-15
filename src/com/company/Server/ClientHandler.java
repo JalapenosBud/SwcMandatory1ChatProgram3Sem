@@ -58,7 +58,8 @@ public class ClientHandler extends Thread {
                 {
                     output.println("J_ERR");
                 }
-                else {
+                else
+                    {
                     output.println("J_OK");
                     break;
                 }
@@ -69,7 +70,6 @@ public class ClientHandler extends Thread {
         broadcaster.sendToAllUsers(output);
     }
 
-
     private void checkData(String message)
     {
         String[] tmpInfo = message.split(" ");
@@ -77,9 +77,8 @@ public class ClientHandler extends Thread {
         {
             broadcaster.sendToAllUsers(output);
         }
-        else if(tmpInfo[2].contains("QUIT"))
+        else if(tmpInfo[1].contains("QUIT"))
         {
-
             try {
                 ServerMain.removeAndUpdateList(userName);
                 broadcaster.sendToAllUsers(output);
@@ -88,13 +87,11 @@ public class ClientHandler extends Thread {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
         else
         {
             broadcaster.sendToAllUsers(output);
         }
-
     }
     
     public void run()
@@ -109,10 +106,13 @@ public class ClientHandler extends Thread {
 
                 if(message[0].equals("JOIN"))
                 {
+                    checkJoin(received);
 
                 }
                 else if(message[0].equals("DATA"))
                 {
+                    checkData(received);
+
 
                 }
                 else if(message[0].equals("IMAV"))
