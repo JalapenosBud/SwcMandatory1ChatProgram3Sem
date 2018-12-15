@@ -8,14 +8,17 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class Client{
+public class Client
+{
     
     private String name;
     private Socket socket;
     
     private boolean amIAlive = false;
     
-    public Client(){}
+    public Client()
+    {
+    }
     
     public Client(String name, Socket socket, boolean amIAlive)
     {
@@ -24,26 +27,31 @@ public class Client{
         this.amIAlive = amIAlive;
     }
     
-    public boolean isAmIAlive() {
+    public boolean isAmIAlive()
+    {
         return amIAlive;
     }
     
-    public void setAmIAlive(boolean amIAlive) {
+    public void setAmIAlive(boolean amIAlive)
+    {
         this.amIAlive = amIAlive;
     }
     
-    public String getName() {
+    public String getName()
+    {
         return name;
     }
     
-    public Socket getSocket() {
+    public Socket getSocket()
+    {
         return socket;
     }
     
     @Override
-    public String toString() {
+    public String toString()
+    {
         return name;
     }
-
+    
     
 }

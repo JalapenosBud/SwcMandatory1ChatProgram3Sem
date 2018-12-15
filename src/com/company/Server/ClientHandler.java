@@ -21,7 +21,7 @@ public class ClientHandler extends Thread {
     private Scanner input;
     PrintWriter output = null;
     private String userName = "";
-    
+
     public ClientHandler(Socket socket)
     {
         clientSocket = socket;
@@ -58,8 +58,7 @@ public class ClientHandler extends Thread {
                 {
                     output.println("J_ERR");
                 }
-                else
-                    {
+                else {
                     output.println("J_OK");
                     break;
                 }
@@ -93,7 +92,7 @@ public class ClientHandler extends Thread {
             broadcaster.sendToAllUsers(output);
         }
     }
-    
+
     public void run()
     {
         String received;
@@ -121,7 +120,7 @@ public class ClientHandler extends Thread {
                 }
 
             }while(received != null);
-            
+
         }catch (NoSuchElementException noele)
         {
             System.out.println("Noone's typing");
@@ -141,7 +140,7 @@ public class ClientHandler extends Thread {
             System.out.println("Unable to disconnect");
         }
     }
-    
+
     private void addClientToList(Socket socket)
     {
         Client tmpClient = new Client(userName,socket,true);

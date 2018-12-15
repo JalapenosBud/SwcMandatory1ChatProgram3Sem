@@ -6,14 +6,14 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
-import java.util.regex.Pattern;
 
-public class ServerMain {
+public class ServerMain
+{
     
     private static ServerSocket serverSocket;
     private static final int PORT = 1234;
     
-    public static List<Client> clients = new ArrayList<>();
+    public static ArrayList<Client> clientArrayList = new ArrayList<>();
     
     public static void main(String[] args) throws IOException
     {
@@ -35,18 +35,17 @@ public class ServerMain {
         }while(true);
     }
     
-    public static void removeAndUpdateList(String username)
+    public static void removeClientAndUpdateClientList(String username)
     {
-        Iterator<Client> clientIterator = clients.iterator();
-        while(clientIterator.hasNext())
+        Iterator<Client> clientIterator = clientArrayList.iterator();
+        while (clientIterator.hasNext())
         {
             Client client = clientIterator.next();
-            if(client.getName().equals(username))
+            if (client.getName().equals(username))
             {
                 client.setAmIAlive(false);
                 clientIterator.remove();
             }
         }
     }
-
 }

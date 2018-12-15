@@ -10,11 +10,11 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 
 public class ClientMain {
-    
+
     private static InetAddress host;
     private static final int PORT = 1234;
     private static String username;
-    
+
     public static void main(String[] args)
     {
         try
@@ -28,21 +28,21 @@ public class ClientMain {
         }
         sendMessages();
     }
-    
+
     private static void sendMessages()
     {
         Socket socket = null;
         try{
             socket = new Socket(host,PORT);
-            
+
             Scanner networkInput = new Scanner(socket.getInputStream());
             PrintWriter networkOutput = new PrintWriter(socket.getOutputStream(),true);
-            
+
             //set up keyboard input from the user at his computer
             Scanner userEntry = new Scanner(System.in);
-            
+
             ClientListen clientListen = new ClientListen(socket);
-            
+
             String message, response;
 
             do {
@@ -50,17 +50,17 @@ public class ClientMain {
                 message = userEntry.nextLine();
                 username = message;
                 networkOutput.println(Commands.send_JOIN(message,socket.getInetAddress().toString(),PORT));
-    
+
                 response = networkInput.nextLine();
-                
+
             }while(!response.equals("J_OK") && response.equals("J_ERR"));
 
             Thread clientListener = new Thread(clientListen);
             clientListener.start();
-            
+
             Thread clientHearbeat = new Thread(new ClientHeartbeat(networkOutput,username));
             clientHearbeat.start();
-            
+
             while (!message.equals("QUIT"))
             {
                 message = userEntry.nextLine();

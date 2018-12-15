@@ -4,7 +4,8 @@ import com.company.Utilities.Commands;
 
 import java.io.PrintWriter;
 
-public class ClientHeartbeat implements Runnable {
+public class ClientHeartbeat implements Runnable
+{
     
     PrintWriter printWriter;
     String name;
@@ -18,7 +19,7 @@ public class ClientHeartbeat implements Runnable {
     @Override
     public void run()
     {
-        heartbeatIsAlive(printWriter,8,name);
+        heartbeatIsAlive(printWriter, 8, name);
     }
     
     private void heartbeatIsAlive(PrintWriter pw, float timeToCheck, String name)
@@ -28,11 +29,11 @@ public class ClientHeartbeat implements Runnable {
         //tager tiden nu
         long test = System.currentTimeMillis();
         
-        while(countingTime)
+        while (countingTime)
         {
             //hvis det tidspunkt nu minus der hvor vi startede er større end 2 sek
             //print out
-            if(System.currentTimeMillis() - test > timeToCheck * 1000)
+            if (System.currentTimeMillis() - test > timeToCheck * 1000)
             {
                 //System.out.println("heartbeat");
                 pw.println(Commands.send_IMAV(name));
