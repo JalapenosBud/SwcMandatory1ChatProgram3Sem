@@ -10,7 +10,7 @@ public class CheckOnlineUsers implements Runnable
     {
         
         boolean countingTime = true;
-        //tager tiden nu
+
         long test = System.currentTimeMillis();
         
         boolean removethisniggpls = false;

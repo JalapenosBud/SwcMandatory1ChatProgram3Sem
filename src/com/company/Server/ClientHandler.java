@@ -1,142 +1,136 @@
 package com.company.Server;
 
 import com.company.Client.Client;
+import com.company.Utilities.Broadcaster;
 import com.company.Utilities.ColorCoder;
-import com.company.Utilities.StringUtilities;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import static com.company.Utilities.StringUtilities.splitAndClean_DATA_ProtocolFromSymbols;
-import static com.company.Utilities.StringUtilities.splitAndClean_JOIN_protocolFromSymbols;
-import static com.company.Utilities.StringUtilities.splitAndReturnOnlyProtocolMsg;
-import static com.company.Utilities.StringsForProtocols.*;
 
-public class ClientHandler extends Thread
-{
-    
+public class ClientHandler extends Thread {
+
+    Broadcaster broadcaster = new Broadcaster();
+
     private Socket clientSocket;
     private Scanner input;
-    private PrintWriter output;
-    
-    private boolean addedClientToClientList = false;
-    
-    //cache temp user name here to later remove them from list
+    PrintWriter output = null;
     private String userName = "";
-    
+
     public ClientHandler(Socket socket)
     {
-        //set this objects socket to whatever is incoming
         clientSocket = socket;
-        try
-        {
+        try{
             input = new Scanner(clientSocket.getInputStream());
-            output = new PrintWriter(clientSocket.getOutputStream(), true);
+            output = new PrintWriter(clientSocket.getOutputStream(),true);
         }
         catch (IOException ioex)
         {
             ioex.printStackTrace();
         }
     }
-    
-    public void run()
+
+    private void checkJoin(String message)
     {
-        try
+        String[] tmpInfo = message.split(" ");
+
+        String regex="/|:|^<<|>>$";
+        Matcher m = Pattern.compile(regex).matcher(message);
+        message = m.replaceAll(" ");
+        System.out.println(message);
+
+        if(ServerMain.clients.size() == 0)
         {
-            while (!addedClientToClientList)
+            addClientToList(clientSocket);
+            output.println("J_OK");
+            System.out.println("J_OK sent\nUser " + userName + " joined.");
+        }
+        else
+        {
+            for(int i = 0; i < ServerMain.clients.size(); i++)
             {
-                String messageFromClient = input.nextLine();
-                String[] tmpInfo = messageFromClient.split(" ", 2);
-                if (tmpInfo[0].equals(JOIN))
+                if(tmpInfo[1].equals(ServerMain.clients.get(i).getName()))
                 {
-                    System.out.println("received: " + tmpInfo[0] + " from: " + tmpInfo[1]);
-                    userName = splitAndClean_JOIN_protocolFromSymbols(messageFromClient)[1];
-                    
-                    Client tempClient = new Client(userName, clientSocket, true);
-                    
-                    if (ServerMain.clientArrayList.size() > 0)
-                    {
-                        if (doesUserExistInClientList(ServerMain.clientArrayList, userName))
-                        {
-                            output.println(J_ERR);
-                            addedClientToClientList = false;
-                        }
-                        else if (!doesUserExistInClientList(ServerMain.clientArrayList, userName))
-                        {
-                            addNewClientToClientList(tempClient);
-                            printListOfActiveUsersToClient(USER_JOINED);
-                        }
-                        
-                    }
-                    else if (ServerMain.clientArrayList.size() == 0)
-                    {
-                        addNewClientToClientList(tempClient);
-                        printListOfActiveUsersToClient(USER_JOINED);
-                    }
+                    output.println("J_ERR");
+                }
+                else {
+                    output.println("J_OK");
+                    break;
                 }
             }
-            while (addedClientToClientList)
-            {
-                String receivedMessageFromClient = input.nextLine();
-                
-                String splitOnDataAndImavProtocol = splitAndReturnOnlyProtocolMsg(receivedMessageFromClient);
-                
-                if (splitOnDataAndImavProtocol.equals(DATA))
-                {
-                    System.out.println("received DATA");
-                    String[] theSplitMessageFromDataProtocol = StringUtilities.splitAndClean_DATA_ProtocolFromSymbols(receivedMessageFromClient);
-                    
-                    userName = theSplitMessageFromDataProtocol[1];
-                    
-                    if (theSplitMessageFromDataProtocol[2].contains(LIST))
-                    {
-                        printListOfActiveUsersToClient(USERS_ONLINE);
-                    }
-                    else if (theSplitMessageFromDataProtocol[2].contains(QUIT))
-                    {
-                        System.out.println("received QUIT");
-                        try
-                        {
-                            ServerMain.removeClientAndUpdateClientList(userName);
-                            
-                            printListOfActiveUsersToClient(USER_LEFT);
-                            
-                            clientSocket.close();
-                            
-                        }
-                        catch (IOException e)
-                        {
-                            e.printStackTrace();
-                        }
-                    }
-                    else
-                    {
-                        sendToAllUsers(ColorCoder.ANSI_BLUE + userName + "> " + ColorCoder.ANSI_BLACK + theSplitMessageFromDataProtocol[2],userName);
-                    }
-                }
-                if (splitOnDataAndImavProtocol.equals(IMAV))
-                {
-                    String[] duoArr = receivedMessageFromClient.split(" ");
-                    System.out.println(duoArr[1] + " is alive");
-                }
+            addClientToList(clientSocket);
+            System.out.println("J_OK sent\nUser " + userName + " joined.");
+        }
+        broadcaster.sendToAllUsers(output);
+    }
+
+    private void checkData(String message)
+    {
+        String[] tmpInfo = message.split(" ");
+        if(tmpInfo[0].contains("LIST"))
+        {
+            broadcaster.sendToAllUsers(output);
+        }
+        else if(tmpInfo[1].contains("QUIT"))
+        {
+            try {
+                ServerMain.removeAndUpdateList(userName);
+                broadcaster.sendToAllUsers(output);
+                clientSocket.close();
+
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
-        catch (NoSuchElementException noele)
+        else
+        {
+            broadcaster.sendToAllUsers(output);
+        }
+    }
+
+    public void run()
+    {
+        String received;
+        try{
+
+            do {
+                received = input.nextLine();
+
+                String[] message = received.split(" " ,2);
+
+                if(message[0].equals("JOIN"))
+                {
+                    checkJoin(received);
+
+                }
+                else if(message[0].equals("DATA"))
+                {
+                    checkData(received);
+
+
+                }
+                else if(message[0].equals("IMAV"))
+                {
+
+                }
+
+            }while(received != null);
+
+        }catch (NoSuchElementException noele)
         {
             System.out.println("Noone's typing");
         }
-    
-        /*try
+        try
         {
-        //its only possible to terminate a connection if the client exists
             if(clientSocket != null)
             {
-                ServerMain.removeClientAndUpdateClientList(userName);
-                sendToAllUsers(printListOfActiveUsersToClient());
+                ServerMain.removeAndUpdateList(userName);
+                broadcaster.sendToAllUsers(output);
                 System.out.println("Closing down connection");
                 clientSocket.close();
             }
@@ -144,73 +138,12 @@ public class ClientHandler extends Thread
         catch (IOException ioex)
         {
             System.out.println("Unable to disconnect");
-        }*/
-    }
-    
-    private boolean doesUserExistInClientList(ArrayList<Client> clientArrayList, String usernameToCompare)
-    {
-        for (Client clientInClientList : clientArrayList)
-        {
-            if (clientInClientList.getName().equals(usernameToCompare))
-            {
-                return true;
-            }
         }
-        return false;
     }
-    
-    private void addNewClientToClientList(Client tempClient)
+
+    private void addClientToList(Socket socket)
     {
-        ServerMain.clientArrayList.add(tempClient);
-        output.println(J_OK);
-        System.out.println("J_OK sent\nUser " + userName + " joined.");
-        addedClientToClientList = true;
-    }
-    
-    private void printListOfActiveUsersToClient(String eventMessage)
-    {
-        String tmp = "";
-        
-        for (Client c : ServerMain.clientArrayList)
-        {
-            tmp += c.getName() + ", ";
-        }
-        
-        for (Client c : ServerMain.clientArrayList)
-        {
-            try
-            {
-                output = new PrintWriter(c.getSocket().getOutputStream(),true);
-                output.println(ColorCoder.ANSI_BLACK + eventMessage + ColorCoder.ANSI_PURPLE + "Now online: " + ColorCoder.ANSI_RED + tmp);
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-        }
-        
-    }
-    
-    private void sendToAllUsers(String msg, String thisClientUsername)
-    {
-        for (Client c : ServerMain.clientArrayList)
-        {
-            if(!c.getName().equals(thisClientUsername))
-            {
-                try
-                {
-                    output = new PrintWriter(c.getSocket().getOutputStream(), true);
-        
-                    output.println(msg);
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-            
-            
-           
-        }
+        Client tmpClient = new Client(userName,socket,true);
+        ServerMain.clients.add(tmpClient);
     }
 }
