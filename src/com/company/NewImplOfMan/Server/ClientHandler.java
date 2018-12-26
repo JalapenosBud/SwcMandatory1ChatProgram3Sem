@@ -13,6 +13,8 @@ class ClientHandler extends Thread
     private Scanner input;
     private PrintWriter output;
     
+    Broadcaster broadcaster = new Broadcaster();
+    
     public ClientHandler(Socket socket)
     {
         client = socket;
@@ -50,11 +52,15 @@ class ClientHandler extends Thread
                 }
                 else{
                     Server.clients.put(msg[1],client);
-                    output.println("USER: " + msg[1] + msg[0]);
+                    output.println("J_OK");
                 }
             }
+            if(msg[0].equals("LIST"))
+            {
+                broadcaster.sendToAllUsers(output);
+            }
             
-        } while (!received.equals("QUIT"));
+        } while (!received.equals(""));
         try
         {
             if (client != null)

@@ -12,6 +12,13 @@ public class Client
     private static InetAddress host;
     private static final int PORT = 1234;
     
+    private static boolean hasConnected;
+    
+    private static boolean holdConnnection()
+    {
+        return hasConnected;
+    }
+    
     public static void main(String[] args)
     {
         try
@@ -23,7 +30,20 @@ public class Client
             System.out.println("\nHost ID not found!\n");
             System.exit(1);
         }
-        getUserNameFromClient();
+        while(!hasConnected)
+        {
+            getUserNameFromClient();
+        }
+        if(hasConnected)
+        {
+            chat();
+        }
+        
+    }
+    
+    private static void chat()
+    {
+        System.out.println("chatting");
     }
     
     private static void getUserNameFromClient()
@@ -35,6 +55,7 @@ public class Client
             Scanner userInput = new Scanner(System.in);
             PrintWriter networkOutput = new PrintWriter(socket.getOutputStream(),true);
             String name, response;
+    
             do
             {
                 System.out.println("Enter username");
@@ -44,39 +65,18 @@ public class Client
                 if(response.equals("J_ERR"))
                 {
                     System.out.println("username exists, reenter pls");
+                }
+                else {
+                    System.out.println("welcome to the server");
+                    hasConnected = true;
                     break;
                 }
-                System.out.println(response);
-            }while(!response.equals("J_OK"));
+            }while(!hasConnected);
         }
         catch (IOException iox)
         {
             iox.getStackTrace();
         }
-        finally
-        {
-            try
-            {
-                System.out.println("\nClosing connection…");
-                socket.close();
-            }
-            catch (IOException ioEx)
-            {
-                ioEx.printStackTrace();
-            }
-            finally
-            {
-                try
-                {
-                    System.out.println("\nClosing connection…");
-                    socket.close();
-                }
-                catch (IOException ioEx)
-                {
-                    System.out.println("Unable to disconnect!");
-                    System.exit(1);
-                }
-            }
-        }
+        
     }
 }
