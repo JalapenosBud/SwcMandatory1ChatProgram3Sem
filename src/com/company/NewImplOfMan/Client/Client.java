@@ -39,9 +39,13 @@ public class Client
             {
                 System.out.println("Enter username");
                 name = userInput.nextLine();
-                /*"JOIN " + name + ", <<" + host.getHostAddress() + ">>:<<" + PORT + ">>"*/
-                networkOutput.println("JOIN");
+                networkOutput.println("JOIN " + name + ", <<" + host.getHostAddress() + ">>:<<" + PORT + ">>");
                 response = networkInput.nextLine();
+                if(response.equals("J_ERR"))
+                {
+                    System.out.println("username exists, reenter pls");
+                    break;
+                }
                 System.out.println(response);
             }while(!response.equals("J_OK"));
         }

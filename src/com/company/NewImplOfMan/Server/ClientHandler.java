@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 class ClientHandler extends Thread
 {
@@ -32,7 +34,24 @@ class ClientHandler extends Thread
         {
             received = input.nextLine();
             
-                output.println("ECHO: " + received);
+            String regex=",|/|:|<<|>>";
+            Matcher m = Pattern.compile(regex).matcher(received);
+            received = m.replaceAll("");
+            
+            String[] msg = received.split(" ");
+            if(msg[0].equals("JOIN"))
+            {
+                System.out.println(received);
+                output.println("USER: " + msg[1] + msg[0]);
+                
+                if(!Server.clients.containsKey(msg[1]))
+                {
+                    Server.clients.put(msg[1],client);
+                }
+                else{
+                    output.println("J_ERR");
+                }
+            }
             
         } while (!received.equals("QUIT"));
         try
