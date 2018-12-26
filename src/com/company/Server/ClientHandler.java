@@ -44,7 +44,7 @@ public class ClientHandler extends Thread {
         message = m.replaceAll(" ");
         System.out.println(message);
 
-        if(ServerMain.clients.size() == 0)
+        if(ServerMain.clientArrayList.size() == 0)
         {
             addClientToList(clientSocket);
             output.println("J_OK");
@@ -52,9 +52,9 @@ public class ClientHandler extends Thread {
         }
         else
         {
-            for(int i = 0; i < ServerMain.clients.size(); i++)
+            for(int i = 0; i < ServerMain.clientArrayList.size(); i++)
             {
-                if(tmpInfo[1].equals(ServerMain.clients.get(i).getName()))
+                if(tmpInfo[1].equals(ServerMain.clientArrayList.get(i).getName()))
                 {
                     output.println("J_ERR");
                 }
@@ -79,7 +79,7 @@ public class ClientHandler extends Thread {
         else if(tmpInfo[1].contains("QUIT"))
         {
             try {
-                ServerMain.removeAndUpdateList(userName);
+                ServerMain.removeClientAndUpdateClientList(userName);
                 broadcaster.sendToAllUsers(output);
                 clientSocket.close();
 
@@ -129,7 +129,7 @@ public class ClientHandler extends Thread {
         {
             if(clientSocket != null)
             {
-                ServerMain.removeAndUpdateList(userName);
+                ServerMain.removeClientAndUpdateClientList(userName);
                 broadcaster.sendToAllUsers(output);
                 System.out.println("Closing down connection");
                 clientSocket.close();
@@ -144,6 +144,6 @@ public class ClientHandler extends Thread {
     private void addClientToList(Socket socket)
     {
         Client tmpClient = new Client(userName,socket,true);
-        ServerMain.clients.add(tmpClient);
+        ServerMain.clientArrayList.add(tmpClient);
     }
 }
