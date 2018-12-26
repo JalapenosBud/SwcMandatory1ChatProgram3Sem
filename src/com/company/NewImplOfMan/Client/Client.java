@@ -23,7 +23,7 @@ public class Client
             System.out.println("\nHost ID not found!\n");
             System.exit(1);
         }
-        sendMessages();
+        getUserNameFromClient();
     }
     
     private static void getUserNameFromClient()
@@ -31,49 +31,23 @@ public class Client
         Socket socket = null;
         try{
             socket = new Socket(host,PORT);
-            PrintWriter networkOutput = new PrintWriter(socket.getOutputStream(),true);
-            Scanner userInput = new Scanner(System.in);
             Scanner networkInput = new Scanner(socket.getInputStream());
+            Scanner userInput = new Scanner(System.in);
+            PrintWriter networkOutput = new PrintWriter(socket.getOutputStream(),true);
             String name, response;
             do
             {
                 System.out.println("Enter username");
                 name = userInput.nextLine();
-                networkOutput.println("JOIN"/*"JOIN " + name + ", <<" + host.getHostAddress() + ">>:<<" + PORT + ">>"*/);
+                /*"JOIN " + name + ", <<" + host.getHostAddress() + ">>:<<" + PORT + ">>"*/
+                networkOutput.println("JOIN");
                 response = networkInput.nextLine();
-            }while(response.equals("J_ERR"));
+                System.out.println(response);
+            }while(!response.equals("J_OK"));
         }
         catch (IOException iox)
         {
             iox.getStackTrace();
-        }
-        
-        
-    }
-    
-    private static void sendMessages()
-    {
-        Socket socket = null;
-        try
-        {
-            socket = new Socket(host, PORT);
-            Scanner networkInput = new Scanner(socket.getInputStream());
-            PrintWriter networkOutput = new PrintWriter(socket.getOutputStream(), true);
-            Scanner userEntry = new Scanner(System.in);
-            String message, response;
-            do
-            {
-                System.out.print("Enter message ('QUIT' to exit): ");
-                message = userEntry.nextLine();
-                networkOutput.println(message);
-                response = networkInput.nextLine();
-                System.out.println("\nSERVER> " + response);
-                
-            } while (!message.equals("QUIT"));
-        }
-        catch (IOException ioEx)
-        {
-            ioEx.printStackTrace();
         }
         finally
         {

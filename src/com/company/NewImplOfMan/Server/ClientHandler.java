@@ -31,10 +31,9 @@ class ClientHandler extends Thread
         do
         {
             received = input.nextLine();
-            if(received.equals("JOIN"))
-            {
+            
                 output.println("ECHO: " + received);
-            }
+            
         } while (!received.equals("QUIT"));
         try
         {
