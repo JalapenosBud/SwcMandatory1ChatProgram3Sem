@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="77247d0d-d56f-4099-ab6a-f20018ef1085" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/src/com/company/NewImplOfMan/Client/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/NewImplOfMan/Client/Client.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/company/NewImplOfMan/Server/ClientHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/NewImplOfMan/Server/ClientHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/company/NewImplOfMan/Server/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/NewImplOfMan/Server/Server.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -16,11 +14,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="Client.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Client.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/company/NewImplOfMan/Client/Client.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="425">
-              <caret line="46" column="26" selection-start-line="46" selection-start-column="26" selection-end-line="46" selection-end-column="26" />
+              <caret line="46" column="26" lean-forward="true" selection-start-line="46" selection-start-column="26" selection-end-line="46" selection-end-column="26" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -67,11 +65,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ClientHandler.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="ClientHandler.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/company/NewImplOfMan/Server/ClientHandler.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="391">
-              <caret line="50" column="21" lean-forward="true" selection-start-line="50" selection-start-column="21" selection-end-line="50" selection-end-column="21" />
+            <state relative-caret-position="372">
+              <caret line="48" column="43" selection-start-line="48" selection-start-column="43" selection-end-line="48" selection-end-column="43" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -136,8 +134,8 @@
         <option value="$PROJECT_DIR$/src/com/company/NewImplOfMan/Client/ClientMain.java" />
         <option value="$PROJECT_DIR$/src/com/company/NewImplOfMan/Server/ServerMain.java" />
         <option value="$PROJECT_DIR$/src/com/company/NewImplOfMan/Server/Server.java" />
-        <option value="$PROJECT_DIR$/src/com/company/NewImplOfMan/Server/ClientHandler.java" />
         <option value="$PROJECT_DIR$/src/com/company/NewImplOfMan/Client/Client.java" />
+        <option value="$PROJECT_DIR$/src/com/company/NewImplOfMan/Server/ClientHandler.java" />
       </list>
     </option>
   </component>
@@ -244,7 +242,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.ClientMain">
+  <component name="RunManager" selected="Application.ServerMain">
     <configuration name="Client" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.company.NewImplOfMan.Client.Client" />
       <module name="SwcMandatory1ChatProgram3Sem" />
@@ -329,12 +327,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1545856769448</updated>
-      <workItem from="1545856773319" duration="4335000" />
+      <workItem from="1545856773319" duration="4464000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="4335000" />
+    <option name="totallyTimeSpent" value="4464000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="710" y="56" width="1134" height="970" extended-state="0" />
@@ -350,11 +348,11 @@
       <window_info anchor="right" id="Maven Projects" />
       <window_info anchor="bottom" id="Database Changes" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.2950058" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.2950058" />
       <window_info anchor="bottom" id="Terminal" weight="0.329849" />
       <window_info id="Capture Tool" />
       <window_info id="Designer" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.21645796" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.21645796" />
       <window_info anchor="right" id="Database" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -492,20 +490,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/company/NewImplOfMan/Server/ClientHandler.java">
+    <entry file="file://$PROJECT_DIR$/src/com/company/NewImplOfMan/Client/Client.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="391">
-          <caret line="50" column="21" lean-forward="true" selection-start-line="50" selection-start-column="21" selection-end-line="50" selection-end-column="21" />
+        <state relative-caret-position="425">
+          <caret line="46" column="26" lean-forward="true" selection-start-line="46" selection-start-column="26" selection-end-line="46" selection-end-column="26" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/company/NewImplOfMan/Client/Client.java">
+    <entry file="file://$PROJECT_DIR$/src/com/company/NewImplOfMan/Server/ClientHandler.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="425">
-          <caret line="46" column="26" selection-start-line="46" selection-start-column="26" selection-end-line="46" selection-end-column="26" />
+        <state relative-caret-position="372">
+          <caret line="48" column="43" selection-start-line="48" selection-start-column="43" selection-end-line="48" selection-end-column="43" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

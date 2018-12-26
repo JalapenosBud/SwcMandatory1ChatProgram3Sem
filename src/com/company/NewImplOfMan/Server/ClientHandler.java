@@ -42,14 +42,15 @@ class ClientHandler extends Thread
             if(msg[0].equals("JOIN"))
             {
                 System.out.println(received);
-                output.println("USER: " + msg[1] + msg[0]);
                 
-                if(!Server.clients.containsKey(msg[1]))
+                
+                if(Server.clients.containsKey(msg[1]))
                 {
-                    Server.clients.put(msg[1],client);
+                    output.println("J_ERR");
                 }
                 else{
-                    output.println("J_ERR");
+                    Server.clients.put(msg[1],client);
+                    output.println("USER: " + msg[1] + msg[0]);
                 }
             }
             
