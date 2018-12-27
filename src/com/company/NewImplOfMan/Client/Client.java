@@ -1,5 +1,7 @@
 package com.company.NewImplOfMan.Client;
 
+import com.company.Client.ClientListen;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetAddress;
@@ -11,7 +13,7 @@ public class Client
 {
     private static InetAddress host;
     private static final int PORT = 1234;
-    
+    private static String name;
     private static boolean hasConnected;
     
     private static boolean holdConnnection()
@@ -43,6 +45,32 @@ public class Client
     
     private static void chat()
     {
+        Socket socket = null;
+        
+            try
+            {
+                socket = new Socket(host,PORT);
+                Scanner networkInput = new Scanner(socket.getInputStream());
+                Scanner userInput = new Scanner(System.in);
+                PrintWriter networkOutput = new PrintWriter(socket.getOutputStream(),true);
+                
+                ClientListen clientListen = new ClientListen(socket);
+                Thread clientListenThread = new Thread(clientListen);
+                clientListenThread.start();
+                String message, response;
+                do
+                {
+                    message = userInput.nextLine();
+                    networkOutput.println("DATA <<" + name + ">>: <<"+message + ">>");
+                    response = networkInput.nextLine();
+                    System.out.println(response);
+                }while (userInput.equals("*QUIT*"));
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+            
         System.out.println("chatting");
     }
     
@@ -54,7 +82,7 @@ public class Client
             Scanner networkInput = new Scanner(socket.getInputStream());
             Scanner userInput = new Scanner(System.in);
             PrintWriter networkOutput = new PrintWriter(socket.getOutputStream(),true);
-            String name, response;
+            String response;
     
             do
             {

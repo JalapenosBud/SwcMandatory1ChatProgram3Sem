@@ -1,8 +1,6 @@
 package com.company.Server;
 
-import com.company.Client.Client;
 import com.company.Utilities.Broadcaster;
-import com.company.Utilities.ColorCoder;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -17,17 +15,17 @@ public class ClientHandler extends Thread {
 
     Broadcaster broadcaster = new Broadcaster();
 
-    private Socket clientSocket;
+    private Socket client;
     private Scanner input;
     PrintWriter output = null;
     private String userName = "";
 
     public ClientHandler(Socket socket)
     {
-        clientSocket = socket;
+        client = socket;
         try{
-            input = new Scanner(clientSocket.getInputStream());
-            output = new PrintWriter(clientSocket.getOutputStream(),true);
+            input = new Scanner(client.getInputStream());
+            output = new PrintWriter(client.getOutputStream(),true);
         }
         catch (IOException ioex)
         {
@@ -37,33 +35,20 @@ public class ClientHandler extends Thread {
 
     private void checkJoin(String message)
     {
-        String[] tmpInfo = message.split(" ");
+        String[] msg = message.split(" ");
 
         String regex="/|:|^<<|>>$";
         Matcher m = Pattern.compile(regex).matcher(message);
         message = m.replaceAll(" ");
         System.out.println(message);
-
-        if(ServerMain.clientArrayList.size() == 0)
+        
+        if(Server.clients.containsKey(msg[1]))
         {
-            addClientToList(clientSocket);
-            output.println("J_OK");
-            System.out.println("J_OK sent\nUser " + userName + " joined.");
+            output.println("J_ERR");
         }
-        else
-        {
-            for(int i = 0; i < ServerMain.clientArrayList.size(); i++)
-            {
-                if(tmpInfo[1].equals(ServerMain.clientArrayList.get(i).getName()))
-                {
-                    output.println("J_ERR");
-                }
-                else {
-                    output.println("J_OK");
-                    break;
-                }
-            }
-            addClientToList(clientSocket);
+        else {
+            Server.clients.put(msg[1],client);
+            output.println("J_OK");
             System.out.println("J_OK sent\nUser " + userName + " joined.");
         }
         broadcaster.sendToAllUsers(output);
@@ -79,9 +64,8 @@ public class ClientHandler extends Thread {
         else if(tmpInfo[1].contains("QUIT"))
         {
             try {
-                ServerMain.removeClientAndUpdateClientList(userName);
                 broadcaster.sendToAllUsers(output);
-                clientSocket.close();
+                client.close();
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -127,23 +111,16 @@ public class ClientHandler extends Thread {
         }
         try
         {
-            if(clientSocket != null)
+            if(client != null)
             {
-                ServerMain.removeClientAndUpdateClientList(userName);
                 broadcaster.sendToAllUsers(output);
                 System.out.println("Closing down connection");
-                clientSocket.close();
+                client.close();
             }
         }
         catch (IOException ioex)
         {
             System.out.println("Unable to disconnect");
         }
-    }
-
-    private void addClientToList(Socket socket)
-    {
-        Client tmpClient = new Client(userName,socket,true);
-        ServerMain.clientArrayList.add(tmpClient);
     }
 }

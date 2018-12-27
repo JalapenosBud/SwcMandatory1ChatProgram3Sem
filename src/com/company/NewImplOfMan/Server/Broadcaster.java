@@ -1,7 +1,6 @@
 package com.company.NewImplOfMan.Server;
 
-import com.company.Client.Client;
-import com.company.Server.ServerMain;
+import com.company.Server.Server;
 
 import java.io.IOException;
 import java.io.PrintWriter;
