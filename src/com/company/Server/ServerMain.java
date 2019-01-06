@@ -9,7 +9,6 @@ import java.util.*;
 
 public class ServerMain
 {
-    
     private static ServerSocket serverSocket;
     private static final int PORT = 1234;
     

@@ -11,7 +11,7 @@ public class Broadcaster {
     public void sendToAllUsers(PrintWriter output)
     {
         String tmpClientNames = "";
-        for (Client s : ServerMain.clients)
+        for (Client s : ServerMain.clientArrayList)
         {
             try
             {
