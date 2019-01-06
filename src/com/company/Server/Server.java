@@ -1,18 +1,16 @@
 package com.company.Server;
 
-import com.company.Client.Client;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
 
-public class ServerMain
+public class Server
 {
     private static ServerSocket serverSocket;
     private static final int PORT = 1234;
     
-    public static ArrayList<Client> clientArrayList = new ArrayList<>();
+    public static Map<String,Socket> clients = new HashMap<>();
     
     public static void main(String[] args) throws IOException
     {
@@ -34,7 +32,7 @@ public class ServerMain
         }while(true);
     }
     
-    public static void removeClientAndUpdateClientList(String username)
+   /* public static void removeClientAndUpdateClientList(String username)
     {
         Iterator<Client> clientIterator = clientArrayList.iterator();
         while (clientIterator.hasNext())
@@ -46,5 +44,5 @@ public class ServerMain
                 clientIterator.remove();
             }
         }
-    }
+    }*/
 }
